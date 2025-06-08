@@ -12,7 +12,7 @@ enum Direction: Codable {
     case outcome
 }
 
-struct Category: Identifiable, Decodable {
+struct Category: Decodable {
     let id: Int
     let name: String
     let emoji: Character
