@@ -17,14 +17,14 @@ struct Category: Decodable {
     let name: String
     let emoji: Character
     let direction: Direction
-    
+
     private enum CodingKeys: String, CodingKey {
         case id
         case name
         case emoji
         case isIncome
     }
-    
+
     init(from decoder: Decoder ) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
