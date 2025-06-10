@@ -26,6 +26,24 @@ struct BankAccount: Decodable {
         case updatedAt
     }
 
+    init(
+        id: Int,
+        userID: Int,
+        name: String,
+        balance: Decimal,
+        currency: String,
+        createdAt: Date,
+        updatedAt: Date
+    ) {
+        self.id = id
+        self.userId = userID
+        self.name = name
+        self.balance = balance
+        self.currency = currency
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
