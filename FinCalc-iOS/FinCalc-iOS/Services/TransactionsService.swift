@@ -13,11 +13,11 @@ final class TransactionsService {
 
     // MARK: - Methods
     func transaction(id: Int) async throws -> Transaction? {
-        cache.transactions.first { $0.id == id }
+        return cache.transactions.first { $0.id == id }
     }
 
     func transactions(accountId: Int, from startDate: Date, to endDate: Date) async throws -> [Transaction] {
-        cache.transactions.filter {
+        return cache.transactions.filter {
             $0.accountId == accountId &&
             $0.transactionDate >= startDate &&
             $0.transactionDate <= endDate
