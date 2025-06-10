@@ -7,6 +7,25 @@
 
 import Foundation
 
+struct TransactionResponse: Decodable {
+    let id: Int
+    let account: AccountBrief
+    let category: Category
+    let amount: String
+    let transactionDate: String
+    let comment: String?
+    let createdAt: String
+    let updatedAt: String
+}
+
+struct TransactionRequest: Encodable {
+    let accountId: Int
+    let categoryId: Int
+    let amount: String
+    let transactionDate: String
+    let comment: String?
+}
+
 struct Transaction: Decodable {
     let id: Int
     let accountId: Int
@@ -16,17 +35,6 @@ struct Transaction: Decodable {
     let comment: String?
     let createdAt: Date
     let updatedAt: Date
-
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case accountId
-        case categoryId
-        case amount
-        case transactionDate
-        case comment
-        case createdAt
-        case updatedAt
-    }
 
     init(
         id: Int,
@@ -48,43 +56,35 @@ struct Transaction: Decodable {
         self.updatedAt = updatedAt
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(Int.self, forKey: .id)
-        accountId = try container.decode(Int.self, forKey: .accountId)
-        categoryId = try container.decode(Int.self, forKey: .categoryId)
-
-        let amountString = try container.decode(String.self, forKey: .amount)
-        guard let amountDecimal = Decimal(string: amountString) else {
-            throw DecodingError.dataCorruptedError(forKey: .amount, in: container, debugDescription: "Amount is not a valid decimal string")
-        }
-        amount = amountDecimal
-
-        comment = try? container.decodeIfPresent(String.self, forKey: .comment)
-
-        let transactionDateString = try container.decode(String.self, forKey: .transactionDate)
-        let createdAtString = try container.decode(String.self, forKey: .createdAt)
-        let updatedAtString = try container.decode(String.self, forKey: .updatedAt)
-
+    init?(from response: TransactionResponse) {
         guard
-            let transactionDateValue = DateFormatters.iso8601.date(from: transactionDateString),
-            let createdAtValue = DateFormatters.iso8601.date(from: createdAtString),
-            let updatedAtValue = DateFormatters.iso8601.date(from: updatedAtString)
-        else {
-            throw DecodingError.dataCorruptedError(
-                forKey: .transactionDate,
-                in: container,
-                debugDescription: "Date string does not match date format"
-            )
-        }
-
-        transactionDate = transactionDateValue
-        createdAt = createdAtValue
-        updatedAt = updatedAtValue
+            let amount = Decimal(string: response.amount),
+            let transactionDate = DateFormatters.iso8601.date(from: response.transactionDate),
+            let createdAt = DateFormatters.iso8601.date(from: response.createdAt),
+            let updatedAt = DateFormatters.iso8601.date(from: response.updatedAt)
+        else { return nil }
+        self.id = response.id
+        self.accountId = response.account.id
+        self.categoryId = response.category.id
+        self.amount = amount
+        self.transactionDate = transactionDate
+        self.comment = response.comment
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 
 extension Transaction {
+    var request: TransactionRequest {
+        TransactionRequest(
+            accountId: accountId,
+            categoryId: categoryId,
+            amount: "\(amount)",
+            transactionDate: DateFormatters.iso8601.string(from: transactionDate),
+            comment: comment
+        )
+    }
+
     var jsonObject: Any {
         var dict: [String: Any] = [
             "id": id,

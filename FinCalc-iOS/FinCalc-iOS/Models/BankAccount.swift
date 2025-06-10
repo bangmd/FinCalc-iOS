@@ -7,7 +7,14 @@
 
 import Foundation
 
-struct BankAccount: Decodable {
+struct AccountBrief: Decodable {
+    let id: Int
+    let name: String
+    let balance: String
+    let currency: String
+}
+
+struct Account: Decodable {
     let id: Int
     let userId: Int
     let name: String
@@ -28,7 +35,7 @@ struct BankAccount: Decodable {
 
     init(
         id: Int,
-        userID: Int,
+        userId: Int,
         name: String,
         balance: Decimal,
         currency: String,
@@ -36,7 +43,7 @@ struct BankAccount: Decodable {
         updatedAt: Date
     ) {
         self.id = id
-        self.userId = userID
+        self.userId = userId
         self.name = name
         self.balance = balance
         self.currency = currency
@@ -52,7 +59,11 @@ struct BankAccount: Decodable {
 
         let balanceString = try container.decode(String.self, forKey: .balance)
         guard let balanceDecimal = Decimal(string: balanceString) else {
-            throw DecodingError.dataCorruptedError(forKey: .balance, in: container, debugDescription: "Balance is not a valid decimal string")
+            throw DecodingError.dataCorruptedError(
+                forKey: .balance,
+                in: container,
+                debugDescription: "Balance is not a valid decimal string"
+            )
         }
         balance = balanceDecimal
 
@@ -64,7 +75,11 @@ struct BankAccount: Decodable {
             let created = DateFormatters.iso8601.date(from: createdAtString),
             let updated = DateFormatters.iso8601.date(from: updatedAtString)
         else {
-            throw DecodingError.dataCorruptedError(forKey: .createdAt, in: container, debugDescription: "Date string does not match date format")
+            throw DecodingError.dataCorruptedError(
+                forKey: .createdAt,
+                in: container,
+                debugDescription: "Date string does not match date format"
+            )
         }
         createdAt = created
         updatedAt = updated

@@ -54,7 +54,6 @@ disabled_rules:
   - class_delegate_protocol
   - trailing_comma
   - blanket_disable_command
-  - line_length
   - redundant_optional_initialization
 
 cyclomatic_complexity:
@@ -114,3 +113,9 @@ nesting:
     warning: 3
 todo:
   only: FIXME
+
+line_length:
+  warning: 120
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
