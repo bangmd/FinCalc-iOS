@@ -8,6 +8,7 @@
 import Foundation
 
 final class BankAccountsService {
+    // MARK: - Properties
     private var mockAccount = BankAccount(
         id: Int.random(in: 1...100000),
         userID: Int.random(in: 1...100000),
@@ -18,6 +19,7 @@ final class BankAccountsService {
         updatedAt: DateFormatters.iso8601.date(from: "2024-02-01T12:00:00Z") ?? Date()
     )
 
+    // MARK: - Methods
     func fetchAccount() async throws -> BankAccount {
         return mockAccount
     }

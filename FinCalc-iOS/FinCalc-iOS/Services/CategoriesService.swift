@@ -8,6 +8,7 @@
 import Foundation
 
 final class CategoriesService {
+    // MARK: - Properties
     private let mockCategories: [Category] = [
         Category(id: 1, name: "Аренда квартиры", emoji: "🏠", direction: .outcome),
         Category(id: 2, name: "Одежда", emoji: "👔", direction: .outcome),
@@ -16,6 +17,7 @@ final class CategoriesService {
         Category(id: 5, name: "Продукты", emoji: "🍬", direction: .outcome),
     ]
 
+    // MARK: - Methods
     func getAllCategories() async throws -> [Category] {
         return mockCategories
     }
