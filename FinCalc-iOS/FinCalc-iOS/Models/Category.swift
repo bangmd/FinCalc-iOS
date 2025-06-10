@@ -25,6 +25,13 @@ struct Category: Decodable {
         case isIncome
     }
 
+    init(id: Int, name: String, emoji: Character, direction: Direction) {
+        self.id = id
+        self.name = name
+        self.emoji = emoji
+        self.direction = direction
+    }
+
     init(from decoder: Decoder ) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
