@@ -14,6 +14,12 @@ struct AccountBrief: Decodable {
     let currency: String
 }
 
+struct AccountUpdateRequest: Encodable {
+    let name: String
+    let balance: String
+    let currency: String
+}
+
 struct Account: Decodable {
     let id: Int
     let userId: Int

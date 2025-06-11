@@ -9,25 +9,42 @@ import Foundation
 
 final class BankAccountsService {
     // MARK: - Properties
-    private var mockAccount = BankAccount(
-        id: Int.random(in: 1...100000),
-        userID: Int.random(in: 1...100000),
-        name: "Основной счет",
-        balance: Decimal(string: "102020202") ?? 0,
-        currency: "RUB",
-        createdAt: DateFormatters.iso8601.date(from: "2024-01-01T12:00:00Z") ?? Date(),
-        updatedAt: DateFormatters.iso8601.date(from: "2024-02-01T12:00:00Z") ?? Date()
-    )
+    private var mockAccounts: [Account] = [
+        Account(
+            id: 1,
+            userId: 123,
+            name: "Основной счёт",
+            balance: Decimal(string: "1000.00") ?? 0,
+            currency: "RUB",
+            createdAt: DateFormatters.iso8601.date(from: "2025-06-11T22:05:33.951Z") ?? Date(),
+            updatedAt: DateFormatters.iso8601.date(from: "2025-06-11T22:05:33.951Z") ?? Date()
+        )
+    ]
 
     // MARK: - Methods
-    func fetchAccount() async throws -> BankAccount {
-        return mockAccount
+    func fetchAccount() async throws -> Account? {
+        return mockAccounts.first
     }
 
-    func updateAccount(id: Int, account: BankAccount) async throws {
-        guard mockAccount.id == id else {
-            throw NSError(domain: "BankAccountsService", code: 404, userInfo: [NSLocalizedDescriptionKey: "Account not found"])
+    func updateAccount(id: Int, request: AccountUpdateRequest) async throws -> Account? {
+        guard let index = mockAccounts.firstIndex(where: { $0.id == id }) else {
+            throw NSError(
+                domain: "BankAccountsService",
+                code: 404,
+                userInfo: [NSLocalizedDescriptionKey: "Account not found"]
+            )
         }
-        mockAccount = account
+        let now = Date()
+        let updated = Account(
+            id: mockAccounts[index].id,
+            userId: mockAccounts[index].userId,
+            name: request.name,
+            balance: Decimal(string: request.balance) ?? 0,
+            currency: request.currency,
+            createdAt: mockAccounts[index].createdAt,
+            updatedAt: now
+        )
+        mockAccounts[index] = updated
+        return updated
     }
 }

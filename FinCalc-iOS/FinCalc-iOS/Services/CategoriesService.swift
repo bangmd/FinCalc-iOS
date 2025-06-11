@@ -22,7 +22,7 @@ final class CategoriesService {
         return mockCategories
     }
 
-    func getCategoriesByType(type: Direction) async throws -> [Category] {
-        return mockCategories.filter { $0.direction == type }
+    func getCategoriesByType(direction: Direction) async throws -> [Category] {
+        return mockCategories.filter { $0.direction == direction }
     }
 }
