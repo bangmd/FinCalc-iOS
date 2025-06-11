@@ -13,4 +13,19 @@ enum DateFormatters {
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter
     }()
+
+    static let yyyyMMdd: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
+    }()
+}
+
+extension Date {
+    func onlyDateString() -> String {
+        let formatter = DateFormatters.yyyyMMdd
+        return formatter.string(from: self)
+    }
 }
