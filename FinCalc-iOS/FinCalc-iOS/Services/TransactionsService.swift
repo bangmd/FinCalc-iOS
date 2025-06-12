@@ -67,7 +67,7 @@ final class TransactionsService {
     func createTransaction(request: TransactionRequest) async throws -> Transaction {
         let now = Date()
         let id = nextId
-        let transaction = Transaction(
+        return Transaction(
             id: id,
             accountId: request.accountId,
             categoryId: request.categoryId,
@@ -77,7 +77,6 @@ final class TransactionsService {
             createdAt: now,
             updatedAt: now
         )
-        return transaction
     }
 
     func updateTransaction(id: Int, request: TransactionRequest) async throws -> TransactionResponse {
