@@ -142,4 +142,40 @@ final class TransactionTests: XCTestCase {
         XCTAssertNotNil(parsed)
         XCTAssertEqual(parsed?.id, dict["id"] as? Int)
     }
+
+    func test_export_and_import_single_csv() {
+        let transaction = makeTransaction()
+        let csvLine = transaction.csvLine
+        guard let parsed = Transaction.fromCSV(csvLine) else {
+            XCTFail("fromCSV returned nil for valid CSV line")
+            return
+        }
+        XCTAssertEqual(parsed.id, transaction.id)
+        XCTAssertEqual(parsed.accountId, transaction.accountId)
+        XCTAssertEqual(parsed.categoryId, transaction.categoryId)
+        XCTAssertEqual(parsed.amount, transaction.amount)
+        XCTAssertEqual(parsed.transactionDate, transaction.transactionDate)
+        XCTAssertEqual(parsed.comment, transaction.comment)
+        XCTAssertEqual(parsed.createdAt, transaction.createdAt)
+        XCTAssertEqual(parsed.updatedAt, transaction.updatedAt)
+    }
+
+    func test_import_csv_file_multiple_transactions() {
+        let csv = """
+        1,2,3,1234.56,2024-06-11T10:00:00.000Z,First comment,2024-06-11T10:00:00.000Z,2024-06-11T10:00:00.000Z
+        2,2,4,789.00,2024-06-12T11:30:00.000Z,,2024-06-12T11:30:00.000Z,2024-06-12T11:30:00.000Z
+        """
+        let transactions = Transaction.fromCSVFile(csv)
+        XCTAssertEqual(transactions.count, 2)
+        XCTAssertEqual(transactions[0].id, 1)
+        XCTAssertEqual(transactions[0].comment, "First comment")
+        XCTAssertEqual(transactions[1].id, 2)
+        XCTAssertNil(transactions[1].comment)
+    }
+
+    func test_fromCSV_invalid_string_returns_nil() {
+        let badCSV = "invalid,csv,line"
+        let parsed = Transaction.fromCSV(badCSV)
+        XCTAssertNil(parsed)
+    }
 }
