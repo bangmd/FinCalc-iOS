@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		DB8831B32DFAE97B000E2A9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB2DDF712DF5DDDE0042D9E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB2DDF782DF5DDDE0042D9E1;
+			remoteInfo = "FinCalc-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		DB2DDF792DF5DDDE0042D9E1 /* FinCalc-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FinCalc-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB8831AF2DFAE97B000E2A9C /* FinCalc-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FinCalc-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = "FinCalc-iOS";
 			sourceTree = "<group>";
 		};
+		DB8831B02DFAE97B000E2A9C /* FinCalc-iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "FinCalc-iOSTests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DB2DDF762DF5DDDE0042D9E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB8831AC2DFAE97B000E2A9C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				DB2DDF7B2DF5DDDE0042D9E1 /* FinCalc-iOS */,
+				DB8831B02DFAE97B000E2A9C /* FinCalc-iOSTests */,
 				DB2DDF7A2DF5DDDE0042D9E1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				DB2DDF792DF5DDDE0042D9E1 /* FinCalc-iOS.app */,
+				DB8831AF2DFAE97B000E2A9C /* FinCalc-iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,6 +96,29 @@
 			productReference = DB2DDF792DF5DDDE0042D9E1 /* FinCalc-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		DB8831AE2DFAE97B000E2A9C /* FinCalc-iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB8831B52DFAE97B000E2A9C /* Build configuration list for PBXNativeTarget "FinCalc-iOSTests" */;
+			buildPhases = (
+				DB8831AB2DFAE97B000E2A9C /* Sources */,
+				DB8831AC2DFAE97B000E2A9C /* Frameworks */,
+				DB8831AD2DFAE97B000E2A9C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB8831B42DFAE97B000E2A9C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DB8831B02DFAE97B000E2A9C /* FinCalc-iOSTests */,
+			);
+			name = "FinCalc-iOSTests";
+			packageProductDependencies = (
+			);
+			productName = "FinCalc-iOSTests";
+			productReference = DB8831AF2DFAE97B000E2A9C /* FinCalc-iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -78,11 +126,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					DB2DDF782DF5DDDE0042D9E1 = {
 						CreatedOnToolsVersion = 16.1;
+					};
+					DB8831AE2DFAE97B000E2A9C = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = DB2DDF782DF5DDDE0042D9E1;
 					};
 				};
 			};
@@ -104,12 +156,20 @@
 			projectRoot = "";
 			targets = (
 				DB2DDF782DF5DDDE0042D9E1 /* FinCalc-iOS */,
+				DB8831AE2DFAE97B000E2A9C /* FinCalc-iOSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DB2DDF772DF5DDDE0042D9E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB8831AD2DFAE97B000E2A9C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -126,12 +186,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DB8831AB2DFAE97B000E2A9C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		DB1E2DB32DF61EBF007AAC69 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = DB1E2DB22DF61EBF007AAC69 /* SwiftLintBuildToolPlugin */;
+		};
+		DB8831B42DFAE97B000E2A9C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB2DDF782DF5DDDE0042D9E1 /* FinCalc-iOS */;
+			targetProxy = DB8831B32DFAE97B000E2A9C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -273,7 +345,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -307,7 +379,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -322,6 +394,44 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		DB8831B62DFAE97B000E2A9C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FDT8P6ZSK5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ru.bangmd.FinCalc-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FinCalc-iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FinCalc-iOS";
+			};
+			name = Debug;
+		};
+		DB8831B72DFAE97B000E2A9C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FDT8P6ZSK5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ru.bangmd.FinCalc-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FinCalc-iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FinCalc-iOS";
 			};
 			name = Release;
 		};
@@ -342,6 +452,15 @@
 			buildConfigurations = (
 				DB2DDF882DF5DDE10042D9E1 /* Debug */,
 				DB2DDF892DF5DDE10042D9E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB8831B52DFAE97B000E2A9C /* Build configuration list for PBXNativeTarget "FinCalc-iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB8831B62DFAE97B000E2A9C /* Debug */,
+				DB8831B72DFAE97B000E2A9C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
