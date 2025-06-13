@@ -37,7 +37,14 @@ struct Category: Decodable {
         id = try container.decode(Int.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         let emojiString = try container.decode(String.self, forKey: .emoji)
-        emoji = emojiString.first ?? "❌"
+        guard let emojiChar = emojiString.first else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .emoji,
+                in: container,
+                debugDescription: "Emoji string is empty"
+            )
+        }
+        emoji = emojiChar
         let isIncome = try container.decode(Bool.self, forKey: .isIncome)
         direction = isIncome ? .income : .outcome
     }

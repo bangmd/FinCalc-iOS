@@ -8,8 +8,16 @@
 import Foundation
 
 final class TransactionsFileCache {
-    // MARK: - Properties
+    // MARK: - Public Properties
     private(set) var transactions: [Transaction] = []
+
+    // MARK: - Private Properties
+    private let fileURL: URL
+
+    // MARK: - Init
+    init(fileURL: URL) {
+        self.fileURL = fileURL
+    }
 
     // MARK: - Methods
     func add(_ transaction: Transaction) {
@@ -21,13 +29,24 @@ final class TransactionsFileCache {
         transactions.removeAll(where: {$0.id == id})
     }
 
-    func save(to fileURL: URL) throws {
+    func save() throws {
+        let directory = fileURL.deletingLastPathComponent()
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+
         let objects = transactions.map { $0.jsonObject }
         let data = try JSONSerialization.data(withJSONObject: objects, options: [.prettyPrinted])
         try data.write(to: fileURL)
     }
 
-    func load(from fileURL: URL) throws {
+    func load() throws {
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            transactions = []
+            return
+        }
         let data = try Data(contentsOf: fileURL)
         let rawArray = try JSONSerialization.jsonObject(with: data)
         guard let array = rawArray as? [Any] else { return }
