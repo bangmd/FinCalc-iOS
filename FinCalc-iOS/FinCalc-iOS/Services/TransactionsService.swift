@@ -23,10 +23,10 @@ final class TransactionsService: TransactionsServiceProtocol {
     private var mockTransactionResponses: [TransactionResponse] = [
         TransactionResponse(
             id: 1,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
+            account: AccountBrief(id: 1, name: "Основной счёт", balance: "150100.00", currency: "RUB"),
             category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
             amount: "500.00",
-            transactionDate: "2025-06-18T20:10:25.588Z",
+            transactionDate: "2025-06-19T20:10:25.588Z",
             comment: nil,
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -34,9 +34,9 @@ final class TransactionsService: TransactionsServiceProtocol {
         TransactionResponse(
             id: 2,
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
-            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .income),
+            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-18T10:01:25.000Z",
+            transactionDate: "2025-06-19T10:01:25.000Z",
             comment: "Кофе с утра",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -46,7 +46,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-18T10:01:25.000Z",
+            transactionDate: "2025-06-19T10:01:25.000Z",
             comment: "Кофе с утра",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -55,8 +55,8 @@ final class TransactionsService: TransactionsServiceProtocol {
             id: 4,
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 4, name: "Техника", emoji: "🚀", direction: .outcome),
-            amount: "15000.00",
-            transactionDate: "2025-06-18T10:01:25.000Z",
+            amount: "150000.00",
+            transactionDate: "2025-06-19T10:01:25.000Z",
             comment: "Ракета",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"

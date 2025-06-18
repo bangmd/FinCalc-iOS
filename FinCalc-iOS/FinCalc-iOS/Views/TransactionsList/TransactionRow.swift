@@ -10,14 +10,15 @@ import SwiftUI
 struct TransactionRow: View {
     let transaction: TransactionResponse
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(Color(.lightGreen))
-                    .frame(width: 22, height: 22)
-                Text("\(transaction.category.emoji)")
-                    .font(.system(size: 14))
-                    .frame(alignment: .center)
+        HStack(spacing: 16) {
+            if transaction.category.direction == .outcome {
+                ZStack {
+                    Circle()
+                        .fill(Color(.lightGreen))
+                        .frame(width: 22, height: 22)
+                    Text("\(transaction.category.emoji)")
+                        .font(.system(size: 14))
+                }
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.category.name)
@@ -30,7 +31,8 @@ struct TransactionRow: View {
                 }
             }
             Spacer()
-            Text("\(Decimal(string: transaction.amount) ?? 0) ₽")
+            let amount = Decimal(string: transaction.amount) ?? .zero
+            Text(amount.formatted(currencyCode: transaction.account.currency))
                 .font(.system(size: 17))
                 .foregroundColor(.black)
             Image(systemName: "chevron.right")
