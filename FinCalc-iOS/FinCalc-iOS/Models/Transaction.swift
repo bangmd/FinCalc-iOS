@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - API Models
-struct TransactionResponse: Decodable {
+struct TransactionResponse: Identifiable, Decodable {
     let id: Int
     let account: AccountBrief
     let category: Category
@@ -28,7 +28,7 @@ struct TransactionRequest: Encodable {
 }
 
 // MARK: - Domain Model
-struct Transaction: Decodable {
+struct Transaction: Identifiable, Decodable {
     let id: Int
     let accountId: Int
     let categoryId: Int

@@ -7,7 +7,15 @@
 
 import Foundation
 
-final class TransactionsService {
+protocol TransactionsServiceProtocol {
+    func fetchTransactions(
+        accountId: Int,
+        startDate: String?,
+        endDate: String?
+    ) async throws -> [TransactionResponse]
+}
+
+final class TransactionsService: TransactionsServiceProtocol {
     // MARK: - Properties
     private var nextId: Int {
         (mockTransactionResponses.map { $0.id }.max() ?? 0) + 1
@@ -18,20 +26,40 @@ final class TransactionsService {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
             amount: "500.00",
-            transactionDate: "2025-06-10T20:10:25.588Z",
-            comment: "Зарплата за месяц",
+            transactionDate: "2025-06-18T20:10:25.588Z",
+            comment: nil,
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
         ),
         TransactionResponse(
             id: 2,
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
+            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .income),
+            amount: "150.00",
+            transactionDate: "2025-06-18T10:01:25.000Z",
+            comment: "Кофе с утра",
+            createdAt: "2025-06-10T20:10:25.588Z",
+            updatedAt: "2025-06-10T20:10:25.588Z"
+        ),
+        TransactionResponse(
+            id: 3,
+            account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-11T10:01:25.000Z",
+            transactionDate: "2025-06-18T10:01:25.000Z",
             comment: "Кофе с утра",
-            createdAt: "2025-06-11T10:01:25.000Z",
-            updatedAt: "2025-06-11T10:01:25.000Z"
+            createdAt: "2025-06-10T20:10:25.588Z",
+            updatedAt: "2025-06-10T20:10:25.588Z"
+        ),
+        TransactionResponse(
+            id: 4,
+            account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
+            category: Category(id: 4, name: "Техника", emoji: "🚀", direction: .outcome),
+            amount: "15000.00",
+            transactionDate: "2025-06-18T10:01:25.000Z",
+            comment: "Ракета",
+            createdAt: "2025-06-10T20:10:25.588Z",
+            updatedAt: "2025-06-10T20:10:25.588Z"
         )
     ]
 
@@ -45,21 +73,19 @@ final class TransactionsService {
             guard transactionResponse.account.id == accountId else {
                 return false
             }
-
+            guard let transactionDate = DateFormatters.iso8601.date(from: transactionResponse.transactionDate) else {
+                return false
+            }
             if let startDateString = startDate,
-               let transactionDate = DateFormatters.iso8601.date(from: transactionResponse.transactionDate),
-               let startDateValue = DateFormatters.yyyyMMdd.date(from: startDateString),
-               transactionDate.onlyDateString() < startDateValue.onlyDateString() {
+               let startDateValue = DateFormatters.iso8601.date(from: startDateString),
+               transactionDate < startDateValue {
                 return false
             }
-
             if let endDateString = endDate,
-               let transactionDate = DateFormatters.iso8601.date(from: transactionResponse.transactionDate),
-               let endDateValue = DateFormatters.yyyyMMdd.date(from: endDateString),
-               transactionDate.onlyDateString() > endDateValue.onlyDateString() {
+               let endDateValue = DateFormatters.iso8601.date(from: endDateString),
+               transactionDate > endDateValue {
                 return false
             }
-
             return true
         }
     }

@@ -36,8 +36,8 @@ enum TabBarItem: String, Identifiable, CaseIterable {
     @ViewBuilder
     var screen: some View {
         switch self {
-        case .outcomes: OutcomesScreen()
-        case .incomes: IncomesScreen()
+        case .outcomes: TransactionsListView(direction: .outcome)
+        case .incomes: TransactionsListView(direction: .income)
         case .account: AccountScreen()
         case .articles: ExpensesScreen()
         case .settings: SettingsScreen()
