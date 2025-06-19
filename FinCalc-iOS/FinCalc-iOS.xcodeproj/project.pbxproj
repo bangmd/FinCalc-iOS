@@ -139,11 +139,12 @@
 				};
 			};
 			buildConfigurationList = DB2DDF742DF5DDDE0042D9E1 /* Build configuration list for PBXProject "FinCalc-iOS" */;
-			developmentRegion = en;
+			developmentRegion = ru;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = DB2DDF702DF5DDDE0042D9E1;
 			minimizedProjectReferenceProxies = 1;

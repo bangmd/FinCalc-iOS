@@ -22,7 +22,9 @@ struct FinCalc: App {
 
     var body: some Scene {
         WindowGroup {
-            TabBarView()
+            NavigationStack {
+                TabBarView()
+            }
         }
     }
 }

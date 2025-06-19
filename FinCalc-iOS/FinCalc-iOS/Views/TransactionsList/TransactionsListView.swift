@@ -10,6 +10,7 @@ import SwiftUI
 struct TransactionsListView: View {
     let direction: Direction
     @StateObject private var viewModel = TransactionsListViewModel()
+    @State private var isHistoryActive = false
 
     var body: some View {
         VStack {
@@ -31,9 +32,7 @@ struct TransactionsListView: View {
         VStack {
             HStack {
                 Spacer()
-                Button {
-                    // TODO: Действие по нажатию
-                } label: {
+                NavigationLink(destination: TransactionsHistoryView(direction: direction)) {
                     Image(systemName: "clock")
                         .font(.system(size: 22))
                         .foregroundColor(Color(.purpleForButton))
