@@ -13,23 +13,23 @@ enum TabBarItem: String, Identifiable, CaseIterable {
 
     var id: String { rawValue }
 
-    var iconName: String {
+    var icon: Image {
         switch self {
-        case .outcomes: "downtrend"
-        case .incomes: "uptrend"
-        case .account: "calculator"
-        case .articles: "icons"
-        case .settings: "vector"
+        case .outcomes: Image("downtrend")
+        case .incomes:  Image("uptrend")
+        case .account:  Image("calculator")
+        case .articles: Image("icons")
+        case .settings: Image("vector")
         }
     }
 
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
-        case .outcomes: "Расходы"
-        case .incomes: "Доходы"
-        case .account: "Счет"
-        case .articles: "Статьи"
-        case .settings: "Настройки"
+        case .outcomes: "tab_outcomes"
+        case .incomes:  "tab_incomes"
+        case .account:  "tab_account"
+        case .articles: "tab_articles"
+        case .settings: "tab_settings"
         }
     }
 
@@ -52,7 +52,7 @@ struct TabBarView: View {
             ForEach(TabBarItem.allCases) { item in
                 item.screen
                     .tabItem {
-                        Image(item.iconName)
+                        item.icon
                             .renderingMode(.template)
                             .frame(width: 21, height: 21)
                             .aspectRatio(contentMode: .fit)

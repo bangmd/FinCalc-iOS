@@ -1,0 +1,145 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "💰" : {
+
+    },
+    "💸" : {
+
+    },
+    "Hello, world!" : {
+
+    },
+    "tab_account" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Счет"
+          }
+        }
+      }
+    },
+    "tab_articles" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Articles"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статьи"
+          }
+        }
+      }
+    },
+    "tab_incomes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incomes"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доходы"
+          }
+        }
+      }
+    },
+    "tab_outcomes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outcomes"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расходы"
+          }
+        }
+      }
+    },
+    "tab_settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
+    "Всего" : {
+
+    },
+    "Доходы сегодня" : {
+
+    },
+    "За выбранный период нет доходов" : {
+
+    },
+    "За выбранный период нет расходов" : {
+
+    },
+    "Моя история" : {
+
+    },
+    "Операции" : {
+
+    },
+    "ОПЕРАЦИИ" : {
+
+    },
+    "Расходы сегодня" : {
+
+    },
+    "Сегодня нет доходов" : {
+
+    },
+    "Сегодня нет расходов" : {
+
+    },
+    "Сумма" : {
+
+    },
+    "Экран настроек" : {
+
+    },
+    "Экран статей" : {
+
+    },
+    "Экран счета" : {
+
+    }
+  },
+  "version" : "1.0"
+}
