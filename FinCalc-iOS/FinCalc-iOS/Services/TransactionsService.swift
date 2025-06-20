@@ -86,7 +86,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "3000.00", currency: "RUB"),
             category: Category(id: 5, name: "Транспорт", emoji: "🚇", direction: .outcome),
             amount: "58.00",
-            transactionDate: "2025-06-17T08:20:00.000Z",
+            transactionDate: "2025-06-20T08:20:00.000Z",
             comment: "Метро",
             createdAt: "2025-06-17T08:20:30.000Z",
             updatedAt: "2025-06-17T08:20:30.000Z"
@@ -96,7 +96,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "150.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "180.00",
-            transactionDate: "2025-06-16T10:05:00.000Z",
+            transactionDate: "2025-06-20T10:05:00.000Z",
             comment: "Латте",
             createdAt: "2025-06-16T10:05:10.000Z",
             updatedAt: "2025-06-16T10:05:10.000Z"
@@ -106,7 +106,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "500.00", currency: "RUB"),
             category: Category(id: 6, name: "Инвестиции", emoji: "📈", direction: .outcome),
             amount: "10000.00",
-            transactionDate: "2025-06-14T12:00:00.000Z",
+            transactionDate: "2025-06-20T12:00:00.000Z",
             comment: nil,
             createdAt: "2025-06-14T12:00:10.000Z",
             updatedAt: "2025-06-14T12:00:10.000Z"

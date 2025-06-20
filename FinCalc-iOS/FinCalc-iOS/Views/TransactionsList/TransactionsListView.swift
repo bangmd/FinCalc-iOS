@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct TransactionsListView: View {
-    let direction: Direction
-    @StateObject private var viewModel = TransactionsListViewModel()
-    @State private var isHistoryActive = false
+    private let direction: Direction
+    @StateObject private var viewModel: TransactionsListViewModel
+
+    init(direction: Direction) {
+        self.direction = direction
+        _viewModel = StateObject(wrappedValue: TransactionsListViewModel())
+    }
 
     var body: some View {
         VStack {
@@ -22,91 +26,106 @@ struct TransactionsListView: View {
         .task {
             await viewModel.loadTransactions(for: direction)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical)
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, Constants.verticalPadding)
         .background(Color(.systemGray6).ignoresSafeArea())
     }
 
-    // MARK: - Header View
+    // MARK: - Header
     private var headerView: some View {
         VStack {
-            HStack {
-                Spacer()
-                NavigationLink(destination: TransactionsHistoryView(direction: direction)) {
-                    Image(systemName: "clock")
-                        .font(.system(size: 22))
-                        .foregroundColor(Color(.purpleForButton))
-                }
+            historyButton
+            titleView
+        }
+    }
+
+    private var historyButton: some View {
+        HStack {
+            Spacer()
+            NavigationLink(destination: TransactionsHistoryView(direction: direction)) {
+                Image(systemName: "clock")
+                    .font(.system(size: Constants.historyIconSize))
+                    .foregroundColor(Color(.purpleForButton))
             }
-            HStack {
-                Text(direction == .outcome ? "Расходы сегодня" : "Доходы сегодня")
-                    .font(.largeTitle)
-                    .bold()
-                Spacer()
-            }
+        }
+    }
+
+    private var titleView: some View {
+        HStack {
+            Text(direction == .outcome ? "today_outcomes" : "today_incomes")
+                .font(.largeTitle)
+                .bold()
+            Spacer()
         }
     }
 
     // MARK: - Total Amount View
     private var totalAmountView: some View {
         HStack {
-            Text("Всего")
+            Text("total_label")
                 .fontWeight(.regular)
-                .padding(.leading, 16)
+                .padding(.leading, Constants.horizontalPadding)
             Spacer()
             Text(viewModel.totalAmount.formatted(currencyCode: "RUB"))
                 .fontWeight(.regular)
-                .padding(.trailing, 16)
+                .padding(.trailing, Constants.horizontalPadding)
         }
-        .frame(height: 44)
+        .frame(height: Constants.totalViewHeight)
         .background(Color.white)
-        .cornerRadius(10)
+        .cornerRadius(Constants.cornerRadius)
     }
 
-    // MARK: - Operations List View
+    // MARK: - Operations
     @ViewBuilder
     private var operationsListView: some View {
         if viewModel.transactions.isEmpty {
-            VStack(spacing: 12) {
-                Text(direction == .outcome ? "💸" : "💰")
-                    .font(.system(size: 56))
-                Text(direction == .outcome ? "Сегодня нет расходов" : "Сегодня нет доходов")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 32)
+            emptyStateView
         } else {
-            VStack {
-                Text("ОПЕРАЦИИ")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 12)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        let cellCorner: CGFloat = 10
-                        ForEach(Array(viewModel.transactions.enumerated()), id: \.element.id) { index, transaction in
-                            TransactionRow(transaction: transaction)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 16)
-                                .frame(height: 44)
-                                .background(Color.white)
-                                .clipShape(
-                                    RoundedCorner(
-                                        radius: cellCorner,
-                                        corners:
-                                            viewModel.transactions.count == 1 ? .allCorners :
-                                            index == 0 ? [.topLeft, .topRight] :
-                                            index == viewModel.transactions.count - 1 ? [.bottomLeft, .bottomRight] :
-                                            []
-                                    )
+            transactionsListView
+        }
+    }
+
+    private var emptyStateView: some View {
+        VStack(spacing: 12) {
+            Text(direction == .outcome ? "💸" : "💰")
+                .font(.system(size: 56))
+            Text(direction == .outcome ? "no_outcomes" : "no_incomes")
+                .font(.headline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.top, 32)
+    }
+
+    private var transactionsListView: some View {
+        VStack(spacing: 0) {
+            Text("operations_header")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.top, Constants.headerPaddingVertical)
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(viewModel.transactions.enumerated()), id: \.element.id) { index, transaction in
+                        TransactionRow(transaction: transaction)
+                            .padding(.vertical, Constants.rowVerticalPadding)
+                            .padding(.horizontal, Constants.rowHorizontalPadding)
+                            .frame(height: Constants.totalViewHeight)
+                            .background(Color.white)
+                            .clipShape(
+                                RoundedCorner(
+                                    radius: Constants.cornerRadius,
+                                    corners: viewModel.transactions.count == 1 ? .allCorners :
+                                        index == 0 ? [.topLeft, .topRight] :
+                                        index == viewModel.transactions.count - 1 ? [.bottomLeft, .bottomRight] :
+                                        []
                                 )
-                            if index != viewModel.transactions.count - 1 {
-                                Divider()
-                                    .padding(.leading, 56)
-                            }
+                            )
+                        if index != viewModel.transactions.count - 1 {
+                            Divider()
+                                .padding(.leading, Constants.dividerIndent)
                         }
                     }
                 }
@@ -121,9 +140,12 @@ struct TransactionsListView: View {
             Button {
             } label: {
                 Image(systemName: "plus")
-                    .font(.system(size: 28))
+                    .font(.system(size: Constants.plusIconSize))
                     .foregroundColor(.white)
-                    .frame(width: 56, height: 56)
+                    .frame(
+                        width: Constants.plusButtonSize,
+                        height: Constants.plusButtonSize
+                    )
                     .background(Color.accentColor)
                     .clipShape(Circle())
             }
@@ -132,5 +154,5 @@ struct TransactionsListView: View {
 }
 
 #Preview {
-    TransactionsListView(direction: .income)
+    TransactionsListView(direction: .outcome)
 }

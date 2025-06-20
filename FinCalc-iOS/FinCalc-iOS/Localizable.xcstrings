@@ -13,6 +13,54 @@
     "Hello, world!" : {
 
     },
+    "no_incomes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No incomes for the selected period"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "За выбранный период нет доходов"
+          }
+        }
+      }
+    },
+    "no_outcomes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No expenses for the selected period"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "За выбранный период нет расходов"
+          }
+        }
+      }
+    },
+    "operations_header" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operations"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОПЕРАЦИИ"
+          }
+        }
+      }
+    },
     "tab_account" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -98,11 +146,53 @@
         }
       }
     },
-    "Всего" : {
-
+    "today_incomes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incomes Today"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доходы сегодня"
+          }
+        }
+      }
     },
-    "Доходы сегодня" : {
-
+    "today_outcomes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expenses Today"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расходы сегодня"
+          }
+        }
+      }
+    },
+    "total_label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всего"
+          }
+        }
+      }
     },
     "За выбранный период нет доходов" : {
 
@@ -114,18 +204,6 @@
 
     },
     "Операции" : {
-
-    },
-    "ОПЕРАЦИИ" : {
-
-    },
-    "Расходы сегодня" : {
-
-    },
-    "Сегодня нет доходов" : {
-
-    },
-    "Сегодня нет расходов" : {
 
     },
     "Сумма" : {
