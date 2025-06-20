@@ -55,14 +55,14 @@ struct TransactionsHistoryView: View {
                     Text(direction == .outcome
                          ? "За выбранный период нет расходов"
                          : "За выбранный период нет доходов")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
+                    .font(.headline)
+                    .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 32)
             } else {
                 ForEach(viewModel.transactions) { transaction in
-                    TransactionRow(transaction: transaction)
+                    HistoryRow(transaction: transaction)
                 }
             }
         } header: {

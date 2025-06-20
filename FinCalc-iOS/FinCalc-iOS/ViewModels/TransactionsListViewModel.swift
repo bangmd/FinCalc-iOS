@@ -38,10 +38,7 @@ final class TransactionsListViewModel: ObservableObject {
             second: 59,
             of: today
         ) else {
-            errorMessage = NSLocalizedString(
-                "error_failed_compute_end_of_day",
-                comment: "Error when computing end of day"
-            )
+            errorMessage = "error_failed_compute_end_of_day"
             return
         }
 

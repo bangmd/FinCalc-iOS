@@ -79,10 +79,7 @@ final class TransactionsHistoryViewModel: ObservableObject {
         defer { isLoading = false }
 
         guard let (startOfDay, endOfDay) = makeBoundaryDates() else {
-            errorMessage = NSLocalizedString(
-                "error_failed_compute_period_boundaries",
-                comment: "Error when period boundary calculation fails"
-            )
+            errorMessage = "error_failed_compute_period_boundaries"
             transactions = []
             totalAmount = 0
             return
