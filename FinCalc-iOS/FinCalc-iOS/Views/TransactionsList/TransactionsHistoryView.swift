@@ -24,6 +24,12 @@ struct TransactionsHistoryView: View {
             dateRow(label: "Начало", selection: $viewModel.fromDate)
             dateRow(label: "Конец", selection: $viewModel.toDate)
             HStack {
+                Text("Сортировка")
+                    .font(.body)
+                Spacer()
+                sortMenu
+            }
+            HStack {
                 Text("Сумма")
                     .font(.body)
                 Spacer()
@@ -67,10 +73,37 @@ struct TransactionsHistoryView: View {
             }
         } header: {
             if !viewModel.transactions.isEmpty {
-                Text("Операции")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                HStack {
+                    Text("Операции")
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
             }
+        }
+    }
+
+    // MARK: - Sort Picker
+    private var sortMenu: some View {
+        Menu {
+            ForEach(SortOption.allCases, id: \.self) { option in
+                Button {
+                    viewModel.sortOption = option
+                } label: {
+                    if option == viewModel.sortOption {
+                        Label(option.titleKey, systemImage: "checkmark")
+                    } else {
+                        Text(option.titleKey)
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+            Text(viewModel.sortOption.titleKey)
+                Image(systemName: "chevron.down")
+            }
+            .font(.body)
+            .foregroundColor(Color.black)
         }
     }
 

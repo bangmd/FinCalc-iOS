@@ -303,3 +303,14 @@ final class TransactionsService: TransactionsServiceProtocol {
         mockTransactionResponses.remove(at: index)
     }
 }
+
+// MARK: - Helpers for sorting
+extension TransactionResponse {
+    var date: Date {
+        DateFormatters.iso8601.date(from: transactionDate) ?? .distantPast
+    }
+
+    var decimalAmount: Decimal {
+        Decimal(string: amount) ?? .zero
+    }
+}

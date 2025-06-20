@@ -23,7 +23,7 @@ final class TransactionsHistoryViewModel: ObservableObject {
             Task { await loadTransactions() }
         }
     }
-    
+
     @MainActor @Published var toDate: Date {
         didSet {
             if toDate < fromDate {
@@ -31,6 +31,10 @@ final class TransactionsHistoryViewModel: ObservableObject {
             }
             Task { await loadTransactions() }
         }
+    }
+
+    @MainActor @Published var sortOption: SortOption = .dateDesc {
+        didSet { Task { await loadTransactions() } }
     }
 
     // MARK: - Configuration
@@ -71,8 +75,7 @@ final class TransactionsHistoryViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Public API
-
+    // MARK: - Loading data
     @MainActor
     func loadTransactions() async {
         isLoading = true
@@ -94,9 +97,10 @@ final class TransactionsHistoryViewModel: ObservableObject {
                 startDate: startString,
                 endDate: endString
             )
-            let filtered = filterByDirection(all)
-            transactions = filtered
-            totalAmount = computeTotal(filtered)
+            var list = filterByDirection(all)
+            sort(&list)
+            transactions = list
+            totalAmount  = computeTotal(list)
             errorMessage = nil
         } catch {
             transactions = []
@@ -122,5 +126,23 @@ final class TransactionsHistoryViewModel: ObservableObject {
 
     private func computeTotal(_ list: [TransactionResponse]) -> Decimal {
         list.reduce(0) { $0 + (Decimal(string: $1.amount) ?? 0) }
+    }
+
+    @MainActor
+    private func sort(_ list: inout [TransactionResponse]) {
+        switch sortOption {
+        case .dateDesc:
+            list.sort { $0.date > $1.date }
+        case .dateAsc:
+            list.sort { $0.date < $1.date }
+        case .amountDesc:
+            list.sort {
+                ($0.decimalAmount, $0.id) > ($1.decimalAmount, $1.id)
+            }
+        case .amountAsc:
+            list.sort {
+                ($0.decimalAmount, $0.id) < ($1.decimalAmount, $1.id)
+            }
+        }
     }
 }
