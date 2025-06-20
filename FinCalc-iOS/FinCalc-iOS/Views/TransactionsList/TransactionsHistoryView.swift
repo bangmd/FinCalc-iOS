@@ -21,16 +21,16 @@ struct TransactionsHistoryView: View {
     // MARK: - Subviews
     private var periodSection: some View {
         Section {
-            dateRow(label: "Начало", selection: $viewModel.fromDate)
-            dateRow(label: "Конец", selection: $viewModel.toDate)
+            dateRow(label: "history_start", selection: $viewModel.fromDate)
+            dateRow(label: "history_end", selection: $viewModel.toDate)
             HStack {
-                Text("Сортировка")
+                Text("sort_title")
                     .font(.body)
                 Spacer()
                 sortMenu
             }
             HStack {
-                Text("Сумма")
+                Text("sum_title")
                     .font(.body)
                 Spacer()
                 Text(viewModel.totalAmount.formatted(currencyCode: "RUB"))
@@ -41,13 +41,13 @@ struct TransactionsHistoryView: View {
     @ViewBuilder
     private func dateRow(label: String, selection: Binding<Date>) -> some View {
         HStack {
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .font(.body)
             Spacer()
             DatePicker("", selection: selection, displayedComponents: [.date])
                 .labelsHidden()
                 .background(Color(.lightGreen))
-                .cornerRadius(6)
+                .cornerRadius(Constants.cornerRadius)
         }
     }
 
@@ -57,15 +57,15 @@ struct TransactionsHistoryView: View {
             if viewModel.transactions.isEmpty {
                 VStack(spacing: 12) {
                     Text(direction == .outcome ? "💸" : "💰")
-                        .font(.system(size: 56))
+                        .font(.system(size: Constants.plusButtonSize))
                     Text(direction == .outcome
-                         ? "За выбранный период нет расходов"
-                         : "За выбранный период нет доходов")
+                         ? "no_outcomes"
+                         : "no_incomes")
                     .font(.headline)
                     .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 32)
+                .padding(.vertical, Constants.plusButtonSize)
             } else {
                 ForEach(viewModel.transactions) { transaction in
                     HistoryRow(transaction: transaction)
@@ -74,8 +74,8 @@ struct TransactionsHistoryView: View {
         } header: {
             if !viewModel.transactions.isEmpty {
                 HStack {
-                    Text("Операции")
-                        .font(.system(size: 13))
+                    Text("operations_header")
+                        .font(.system(size: Constants.secondaryFontSize))
                         .foregroundColor(.secondary)
                     Spacer()
                 }
@@ -120,7 +120,7 @@ struct TransactionsHistoryView: View {
                     .scaleEffect(1.2)
             }
         }
-        .navigationTitle("Моя история")
+        .navigationTitle("history_title")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

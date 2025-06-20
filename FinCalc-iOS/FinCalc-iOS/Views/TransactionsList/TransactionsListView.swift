@@ -88,13 +88,13 @@ struct TransactionsListView: View {
     private var emptyStateView: some View {
         VStack(spacing: 12) {
             Text(direction == .outcome ? "💸" : "💰")
-                .font(.system(size: 56))
+                .font(.system(size: Constants.emptyStateEmojiSize))
             Text(direction == .outcome ? "no_outcomes" : "no_incomes")
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 32)
+        .padding(.top, Constants.emptyStateTopPadding)
     }
 
     private var transactionsListView: some View {
@@ -104,6 +104,7 @@ struct TransactionsListView: View {
                 .foregroundColor(.secondary)
                 .padding(.top, Constants.headerPaddingVertical)
                 .padding(.horizontal)
+                .padding(.bottom, Constants.bottomPaddingForHedder)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView {

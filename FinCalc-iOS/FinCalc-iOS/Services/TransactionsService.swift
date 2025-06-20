@@ -26,7 +26,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "150100.00", currency: "RUB"),
             category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
             amount: "500.00",
-            transactionDate: "2025-06-19T20:10:25.588Z",
+            transactionDate: "2025-06-22T20:10:25.588Z",
             comment: nil,
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -36,7 +36,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-19T10:01:25.000Z",
+            transactionDate: "2025-06-21T10:01:25.000Z",
             comment: "Кофе с утра",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -46,7 +46,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-19T10:01:25.000Z",
+            transactionDate: "2025-06-21T10:01:25.000Z",
             comment: "Кофе с утра",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -56,7 +56,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 4, name: "Техника", emoji: "🚀", direction: .outcome),
             amount: "150000.00",
-            transactionDate: "2025-06-19T10:01:25.000Z",
+            transactionDate: "2025-06-21T10:01:25.000Z",
             comment: "Ракета",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -66,7 +66,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "2000.00", currency: "RUB"),
             category: Category(id: 3, name: "Продукты", emoji: "🛒", direction: .outcome),
             amount: "2300.00",
-            transactionDate: "2025-06-18T15:30:00.000Z",
+            transactionDate: "2025-06-21T15:30:00.000Z",
             comment: "Гипермаркет",
             createdAt: "2025-06-18T15:31:00.000Z",
             updatedAt: "2025-06-18T15:31:00.000Z"
@@ -76,7 +76,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "50000.00", currency: "RUB"),
             category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
             amount: "70000.00",
-            transactionDate: "2025-06-15T09:00:00.000Z",
+            transactionDate: "2025-06-21T09:00:00.000Z",
             comment: "Зарплата за июнь",
             createdAt: "2025-06-15T09:00:01.000Z",
             updatedAt: "2025-06-15T09:00:01.000Z"
@@ -116,7 +116,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "100.00", currency: "RUB"),
             category: Category(id: 7, name: "Кэшбэк", emoji: "🎁", direction: .income),
             amount: "350.00",
-            transactionDate: "2025-06-13T18:45:00.000Z",
+            transactionDate: "2025-06-22T18:45:00.000Z",
             comment: "Кэшбэк Тинькофф",
             createdAt: "2025-06-13T18:45:10.000Z",
             updatedAt: "2025-06-13T18:45:10.000Z"
@@ -166,7 +166,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "500.00", currency: "RUB"),
             category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
             amount: "65000.00",
-            transactionDate: "2025-05-31T09:00:00.000Z",
+            transactionDate: "2025-06-21T09:00:00.000Z",
             comment: "Зарплата за май",
             createdAt: "2025-05-31T09:00:10.000Z",
             updatedAt: "2025-05-31T09:00:10.000Z"

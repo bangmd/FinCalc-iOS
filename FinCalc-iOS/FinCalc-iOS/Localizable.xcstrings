@@ -47,6 +47,57 @@
     "Hello, world!" : {
 
     },
+    "history_end" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конец"
+          }
+        }
+      }
+    },
+    "history_start" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Начало"
+          }
+        }
+      }
+    },
+    "history_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My History"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Моя история"
+          }
+        }
+      }
+    },
     "no_incomes" : {
       "localizations" : {
         "en" : {
@@ -160,7 +211,7 @@
       }
     },
     "sort_title" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -172,6 +223,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировка"
+          }
+        }
+      }
+    },
+    "sum_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sum"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Сумма"
           }
         }
       }
@@ -308,24 +376,6 @@
           }
         }
       }
-    },
-    "За выбранный период нет доходов" : {
-
-    },
-    "За выбранный период нет расходов" : {
-
-    },
-    "Моя история" : {
-
-    },
-    "Операции" : {
-
-    },
-    "Сортировка" : {
-
-    },
-    "Сумма" : {
-
     },
     "Экран настроек" : {
 
