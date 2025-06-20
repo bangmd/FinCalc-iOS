@@ -7,13 +7,12 @@
 
 import Foundation
 
-@MainActor
 final class TransactionsListViewModel: ObservableObject {
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+    @MainActor @Published var isLoading: Bool = false
+    @MainActor @Published var errorMessage: String?
 
-    @Published var transactions: [TransactionResponse] = []
-    @Published var totalAmount: Decimal = 0
+    @MainActor  @Published var transactions: [TransactionResponse] = []
+    @MainActor @Published var totalAmount: Decimal = 0
 
     private let service: TransactionsServiceProtocol
     private let accountId: Int
@@ -26,14 +25,23 @@ final class TransactionsListViewModel: ObservableObject {
         self.accountId = accountId
     }
 
+    @MainActor
     func loadTransactions(for direction: Direction) async {
         isLoading = true
         defer { isLoading = false }
 
         let today = Date()
         let startOfDay = Calendar.current.startOfDay(for: today)
-        guard let endOfDay = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: today) else {
-            errorMessage = "Failed to compute end of day"
+        guard let endOfDay = Calendar.current.date(
+            bySettingHour: 23,
+            minute: 59,
+            second: 59,
+            of: today
+        ) else {
+            errorMessage = NSLocalizedString(
+                "error_failed_compute_end_of_day",
+                comment: "Error when computing end of day"
+            )
             return
         }
 
@@ -47,10 +55,14 @@ final class TransactionsListViewModel: ObservableObject {
                 endDate: endDateString
             )
 
-            let filteredResponses = responses.filter { $0.category.direction == direction }
+            let filteredResponses = responses.filter {
+                $0.category.direction == direction
+            }
 
             self.transactions = filteredResponses
-            self.totalAmount = filteredResponses.reduce(0) { $0 + (Decimal(string: $1.amount) ?? 0) }
+            self.totalAmount = filteredResponses.reduce(0) {
+                $0 + (Decimal(string: $1.amount) ?? 0)
+            }
             self.errorMessage = nil
         } catch {
             self.transactions = []

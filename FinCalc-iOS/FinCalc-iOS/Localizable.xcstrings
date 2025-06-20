@@ -10,6 +10,40 @@
     "💸" : {
 
     },
+    "error_failed_compute_end_of_day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to compute end of day"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось вычислить конец дня"
+          }
+        }
+      }
+    },
+    "error_failed_compute_period_boundaries" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to compute period boundaries"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Не удалось вычислить границы периода"
+          }
+        }
+      }
+    },
     "Hello, world!" : {
 
     },

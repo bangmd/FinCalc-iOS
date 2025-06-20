@@ -7,16 +7,15 @@
 
 import Foundation
 
-@MainActor
 final class TransactionsHistoryViewModel: ObservableObject {
     // MARK: - Published State
-    @Published var transactions: [TransactionResponse] = []
-    @Published var totalAmount: Decimal = 0
-    @Published var errorMessage: String?
-    @Published var isLoading: Bool = false
+    @MainActor @Published var transactions: [TransactionResponse] = []
+    @MainActor @Published var totalAmount: Decimal = 0
+    @MainActor @Published var errorMessage: String?
+    @MainActor @Published var isLoading: Bool = false
 
     // MARK: - Date Range
-    @Published var fromDate: Date {
+    @MainActor @Published var fromDate: Date {
         didSet {
             if fromDate > toDate {
                 toDate = fromDate
@@ -24,7 +23,8 @@ final class TransactionsHistoryViewModel: ObservableObject {
             Task { await loadTransactions() }
         }
     }
-    @Published var toDate: Date {
+    
+    @MainActor @Published var toDate: Date {
         didSet {
             if toDate < fromDate {
                 fromDate = toDate
@@ -39,6 +39,7 @@ final class TransactionsHistoryViewModel: ObservableObject {
     private let service: TransactionsServiceProtocol
 
     // MARK: - Initialization
+    @MainActor
     init(
         direction: Direction,
         accountId: Int = 1,
@@ -51,10 +52,19 @@ final class TransactionsHistoryViewModel: ObservableObject {
         let now = Date()
         let calendar = Calendar.current
 
-        let oneMonthAgo = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+        let oneMonthAgo = calendar.date(
+            byAdding: .month,
+            value: -1,
+            to: now
+        ) ?? now
         self.fromDate = calendar.startOfDay(for: oneMonthAgo)
 
-        if let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: now) {
+        if let endOfDay = calendar.date(
+            bySettingHour: 23,
+            minute: 59,
+            second: 59,
+            of: now
+        ) {
             self.toDate = endOfDay
         } else {
             self.toDate = calendar.startOfDay(for: now)
@@ -63,12 +73,16 @@ final class TransactionsHistoryViewModel: ObservableObject {
 
     // MARK: - Public API
 
+    @MainActor
     func loadTransactions() async {
         isLoading = true
         defer { isLoading = false }
 
         guard let (startOfDay, endOfDay) = makeBoundaryDates() else {
-            errorMessage = "Не удалось вычислить границы периода"
+            errorMessage = NSLocalizedString(
+                "error_failed_compute_period_boundaries",
+                comment: "Error when period boundary calculation fails"
+            )
             transactions = []
             totalAmount = 0
             return
@@ -94,6 +108,7 @@ final class TransactionsHistoryViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     private func makeBoundaryDates() -> (Date, Date)? {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: fromDate)
