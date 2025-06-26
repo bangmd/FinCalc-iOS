@@ -1,0 +1,59 @@
+//
+//  AccountViewModel.swift
+//  FinCalc-iOS
+//
+//  Created by Soslan Dzampaev on 25.06.2025.
+//
+
+import Foundation
+
+final class AccountViewModel: ObservableObject {
+    private let service: BankAccountsServiceProtocol
+
+    init(service: BankAccountsServiceProtocol = BankAccountsService()) {
+        self.service = service
+    }
+
+    // MARK: - Published-свойства для UI
+    @Published var account: Account?
+    @Published var balance: Decimal = 0
+    @Published var currency: Currency = .rub
+    @Published var name: String = ""
+    @Published var isEditing = false
+    @Published var showCurrencyPicker = false
+
+    // MARK: - loading account data
+    @MainActor
+    func loadAccount() async {
+        do {
+            let loaded = try await service.fetchAccount()
+            self.account = loaded
+            self.balance = loaded?.balance ?? 0
+            self.currency = Currency(rawValue: loaded?.currency ?? "") ?? .rub
+            self.name = loaded?.name ?? ""
+        } catch {
+            print("Ошибка загрузки аккаунта: \(error)")
+        }
+    }
+
+    // MARK: - Update data 
+    @MainActor
+    func save() async {
+        guard let id = account?.id else { return }
+        let request = AccountUpdateRequest(
+            name: name,
+            balance: balance.description,
+            currency: currency.rawValue
+        )
+        do {
+            let updated = try await service.updateAccount(id: id, request: request)
+            self.account = updated
+            self.balance = updated?.balance ?? 0
+            self.currency = Currency(rawValue: updated?.currency ?? "") ?? .rub
+            self.name = updated?.name ?? ""
+            self.isEditing = false
+        } catch {
+            print("Ошибка обновления аккаунта: \(error)")
+        }
+    }
+}

@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct AccountScreen: View {
-    @StateObject private var vm = AccountViewModel(balance: 670_000, currency: .rub)
+    @StateObject private var viewModel: AccountViewModel
     @State private var balanceInput: String = ""
+
+    init() {
+        _viewModel = StateObject(
+            wrappedValue: AccountViewModel()
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -24,7 +30,7 @@ struct AccountScreen: View {
             .padding(.vertical, Constants.verticalPadding)
             .background(Color(.systemGray6).ignoresSafeArea())
             .gesture(
-                vm.isEditing
+                viewModel.isEditing
                 ? DragGesture().onEnded { value in
                     if value.translation.height > 50 {
                         hideKeyboard()
@@ -33,23 +39,26 @@ struct AccountScreen: View {
                 : nil
             )
             .onTapGesture {
-                if vm.isEditing {
+                if viewModel.isEditing {
                     hideKeyboard()
                 }
             }
         }
         .confirmationDialog(
             "Валюта",
-            isPresented: $vm.showCurrencyPicker,
+            isPresented: $viewModel.showCurrencyPicker,
             titleVisibility: .visible
         ) {
             ForEach(Currency.allCases, id: \.self) { currency in
                 Button(currency.displayName) {
-                    if currency != vm.currency {
-                        vm.currency = currency
+                    if currency != viewModel.currency {
+                        viewModel.currency = currency
                     }
                 }
             }
+        }
+        .task {
+            await viewModel.loadAccount()
         }
     }
 
@@ -66,15 +75,17 @@ struct AccountScreen: View {
     private var editOrSaveButton: some View {
         HStack {
             Spacer()
-            Button(vm.isEditing ? "save_button" : "edit_button") {
-                if vm.isEditing {
+            Button(viewModel.isEditing ? "save_button" : "edit_button") {
+                if viewModel.isEditing {
                     if let newValue = Decimal(string: balanceInput) {
-                        vm.balance = newValue
+                        viewModel.balance = newValue
                     }
-                    vm.save()
+                    Task {
+                        await viewModel.save()
+                    }
                 } else {
-                    balanceInput = vm.balance.description
-                    vm.isEditing = true
+                    balanceInput = viewModel.balance.description
+                    viewModel.isEditing = true
                 }
             }
             .tint(.purpleForButton)
@@ -93,16 +104,22 @@ struct AccountScreen: View {
             Spacer()
             TextField(
                 "",
-                text: vm.isEditing ? $balanceInput : .constant(vm.balance.formatted(currencyCode: vm.currency.rawValue))
+                text: viewModel.isEditing
+                ? $balanceInput
+                : .constant(
+                    viewModel.balance.formatted(
+                        currencyCode: viewModel.currency.rawValue
+                    )
+                )
             )
             .keyboardType(.numberPad)
             .multilineTextAlignment(.trailing)
-            .disabled(!vm.isEditing)
-            .foregroundColor(vm.isEditing ? .gray : .primary)
+            .disabled(!viewModel.isEditing)
+            .foregroundColor(viewModel.isEditing ? .gray : .primary)
             .font(.system(size: Constants.primaryFontSize, weight: .regular))
         }
         .padding()
-        .background(vm.isEditing ? Color.white : Color.accentColor)
+        .background(viewModel.isEditing ? Color.white : Color.accentColor)
         .cornerRadius(Constants.cornerRadius)
     }
 
@@ -111,22 +128,22 @@ struct AccountScreen: View {
             Text("currency_label")
             Spacer()
             HStack {
-                Text(vm.currency.rawValue)
-                    .foregroundColor(vm.isEditing ? .gray : .primary)
-                if vm.isEditing {
+                Text(viewModel.currency.symbol)
+                    .foregroundColor(viewModel.isEditing ? .gray : .primary)
+                if viewModel.isEditing {
                     Image(systemName: "chevron.right")
                         .font(.system(size: Constants.chevronFontSize, weight: .bold))
                         .foregroundColor(Color(.systemGray3))
                 }
             }
             .onTapGesture {
-                if vm.isEditing {
-                    vm.showCurrencyPicker = true
+                if viewModel.isEditing {
+                    viewModel.showCurrencyPicker = true
                 }
             }
         }
         .padding()
-        .background(vm.isEditing ? Color.white : Color(.lightGreen))
+        .background(viewModel.isEditing ? Color.white : Color(.lightGreen))
         .cornerRadius(Constants.cornerRadius)
     }
 }

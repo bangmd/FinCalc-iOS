@@ -7,7 +7,12 @@
 
 import Foundation
 
-final class BankAccountsService {
+protocol BankAccountsServiceProtocol {
+    func fetchAccount() async throws -> Account?
+    func updateAccount(id: Int, request: AccountUpdateRequest) async throws -> Account?
+}
+
+final class BankAccountsService: BankAccountsServiceProtocol {
     // MARK: - Properties
     private var mockAccounts: [Account] = [
         Account(
