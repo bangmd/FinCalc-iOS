@@ -36,7 +36,7 @@ final class AccountViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Update data 
+    // MARK: - Update data
     @MainActor
     func save() async {
         guard let id = account?.id else { return }

@@ -19,15 +19,21 @@ struct AccountScreen: View {
 
     var body: some View {
         ZStack {
-            VStack {
-                editOrSaveButton
-                titleView
-                balanceSection
-                currencySection
-                Spacer()
+                VStack {
+                    editOrSaveButton
+                    titleView
+                    ScrollView {
+                        balanceSection
+                        currencySection
+                    }
+                    .refreshable {
+                        await viewModel.loadAccount()
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, Constants.horizontalPadding)
+                .padding(.vertical, Constants.verticalPadding)
             }
-            .padding(.horizontal, Constants.horizontalPadding)
-            .padding(.vertical, Constants.verticalPadding)
             .background(Color(.systemGray6).ignoresSafeArea())
             .gesture(
                 viewModel.isEditing
@@ -43,7 +49,6 @@ struct AccountScreen: View {
                     hideKeyboard()
                 }
             }
-        }
         .confirmationDialog(
             "Валюта",
             isPresented: $viewModel.showCurrencyPicker,
