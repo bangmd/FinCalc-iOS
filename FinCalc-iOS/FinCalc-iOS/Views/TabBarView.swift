@@ -32,25 +32,17 @@ enum TabBarItem: String, Identifiable, CaseIterable {
         case .settings: "tab_settings"
         }
     }
-
-    @ViewBuilder
-    var screen: some View {
-        switch self {
-        case .outcomes: TransactionsListView(direction: .outcome)
-        case .incomes: TransactionsListView(direction: .income)
-        case .account: AccountScreen()
-        case .articles: ExpensesScreen()
-        case .settings: SettingsScreen()
-        }
-    }
 }
 
 // MARK: - TabBarView
 struct TabBarView: View {
+    @State private var isBalanceHidden = false
+    @StateObject private var accountVM = AccountViewModel()
+
     var body: some View {
         TabView {
             ForEach(TabBarItem.allCases) { item in
-                item.screen
+                screen(for: item)
                     .tabItem {
                         item.icon
                             .renderingMode(.template)
@@ -61,9 +53,37 @@ struct TabBarView: View {
             }
         }
         .tint(Color.accentColor)
+        .background(Color(.systemGray6))
+        .ignoresSafeArea(.container, edges: .top)
+    }
+
+    // MARK: - Helper
+    @ViewBuilder
+    private func screen(for item: TabBarItem) -> some View {
+        switch item {
+        case .outcomes:
+            TransactionsListView(direction: .outcome)
+        case .incomes:
+            TransactionsListView(direction: .income)
+        case .account:
+            ZStack {
+                AccountScreen(viewModel: accountVM, isBalanceHidden: $isBalanceHidden)
+                if !accountVM.isEditing {
+                    ShakableViewRepresentable {
+                        withAnimation { isBalanceHidden.toggle() }
+                    }
+                    .allowsHitTesting(false)
+                }
+            }
+        case .articles:
+            ExpensesScreen()
+        case .settings:
+            SettingsScreen()
+        }
     }
 }
 
+// MARK: - Preview
 #Preview {
     TabBarView()
 }
