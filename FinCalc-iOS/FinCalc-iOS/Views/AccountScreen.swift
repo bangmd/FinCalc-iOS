@@ -56,7 +56,6 @@ struct AccountScreen: View {
     }
 
     // MARK: - UI Components
-
     private var titleView: some View {
         HStack {
             Text("account_title")
@@ -113,7 +112,7 @@ struct AccountScreen: View {
                 )
         )
         .fixedSize()
-        .keyboardType(.numberPad)
+        .keyboardType(.decimalPad)
         .multilineTextAlignment(.trailing)
         .disabled(!viewModel.isEditing)
         .foregroundColor(viewModel.isEditing ? .gray : .primary)
@@ -123,6 +122,12 @@ struct AccountScreen: View {
             SpoilerOverlay(hidden: $isBalanceHidden)
                 .allowsHitTesting(false)
         )
+        .onChange(of: balanceInput) { _, newValue in
+            let filtered = filterBalanceInput(newValue)
+            if filtered != newValue {
+                balanceInput = filtered
+            }
+        }
     }
 
     private var currencySection: some View {
@@ -151,8 +156,21 @@ struct AccountScreen: View {
 }
 
 // MARK: - Actions & Helpers
-
 extension AccountScreen {
+    private func filterBalanceInput(_ input: String) -> String {
+        var filtered = input
+            .replacingOccurrences(of: ",", with: ".")
+            .filter { "0123456789.".contains($0) }
+
+        let parts = filtered.split(separator: ".", maxSplits: 1, omittingEmptySubsequences: false)
+        filtered = parts.prefix(2).joined(separator: ".")
+        if parts.count == 2, let decimalPart = parts.last {
+            let truncated = String(decimalPart.prefix(2))
+            filtered = "\(parts[0]).\(truncated)"
+        }
+        return filtered
+    }
+
     private var dragToHideKeyboard: some Gesture {
         DragGesture().onEnded { value in
             if value.translation.height > 50 { hideKeyboard() }
