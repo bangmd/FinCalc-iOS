@@ -12,7 +12,8 @@ extension Decimal {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = 0
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
         formatter.locale = Locale(identifier: "ru_RU")
 
         let number = NSDecimalNumber(decimal: self)

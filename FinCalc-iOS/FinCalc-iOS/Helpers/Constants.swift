@@ -27,4 +27,5 @@ enum Constants {
     static let chevronFontSize: CGFloat = 17
     static let emptyStateEmojiSize: CGFloat = 56
     static let emptyStateTopPadding: CGFloat = 32
+    static let rowHeight: CGFloat = 44
 }

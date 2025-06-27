@@ -10,6 +10,70 @@
     "💸" : {
 
     },
+    "account_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Account"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мой счёт"
+          }
+        }
+      }
+    },
+    "balance_label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balance"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Баланс"
+          }
+        }
+      }
+    },
+    "currency_label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта"
+          }
+        }
+      }
+    },
+    "edit_button" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Редактировать"
+          }
+        }
+      }
+    },
     "error_failed_compute_end_of_day" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -43,9 +107,6 @@
           }
         }
       }
-    },
-    "Hello, world!" : {
-
     },
     "history_end" : {
       "extractionState" : "manual",
@@ -142,6 +203,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОПЕРАЦИИ"
+          }
+        }
+      }
+    },
+    "save_button" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранить"
           }
         }
       }
@@ -377,13 +454,13 @@
         }
       }
     },
+    "Валюта" : {
+
+    },
     "Экран настроек" : {
 
     },
     "Экран статей" : {
-
-    },
-    "Экран счета" : {
 
     }
   },
