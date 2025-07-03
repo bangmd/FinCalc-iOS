@@ -22,7 +22,7 @@ struct ExpensesRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(category.name)
                     .font(.system(size: Constants.primaryFontSize))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
             }
             Spacer()
         }

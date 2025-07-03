@@ -71,7 +71,7 @@ struct TransactionsListView: View {
                 .padding(.trailing, Constants.horizontalPadding)
         }
         .frame(height: Constants.totalViewHeight)
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .cornerRadius(Constants.cornerRadius)
     }
 
@@ -114,7 +114,7 @@ struct TransactionsListView: View {
                             .padding(.vertical, Constants.rowVerticalPadding)
                             .padding(.horizontal, Constants.rowHorizontalPadding)
                             .frame(height: Constants.totalViewHeight)
-                            .background(Color.white)
+                            .background(Color(.systemBackground))
                             .clipShape(
                                 RoundedCorner(
                                     radius: Constants.cornerRadius,

@@ -26,7 +26,7 @@ struct HistoryRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.category.name)
                     .font(.system(size: Constants.primaryFontSize))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 if let comment = transaction.comment, !comment.isEmpty {
                     Text(comment)
                         .font(.system(size: Constants.secondaryFontSize))
@@ -38,11 +38,11 @@ struct HistoryRow: View {
                 let amount = Decimal(string: transaction.amount) ?? .zero
                 Text(amount.formatted(currencyCode: transaction.account.currency))
                     .font(.system(size: Constants.primaryFontSize))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 if let date = DateFormatters.iso8601.date(from: transaction.updatedAt) {
                     Text(DateFormatters.hhmmUTC.string(from: date))
                         .font(.system(size: Constants.secondaryFontSize))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 }
             }
             Image(systemName: "chevron.right")

@@ -103,7 +103,7 @@ struct TransactionsHistoryView: View {
                 Image(systemName: "chevron.down")
             }
             .font(.body)
-            .foregroundColor(Color.black)
+            .foregroundColor(.primary)
         }
     }
 
