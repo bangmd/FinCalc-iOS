@@ -10,6 +10,9 @@
     "💸" : {
 
     },
+    "🔍" : {
+
+    },
     "account_title" : {
       "localizations" : {
         "en" : {
@@ -108,6 +111,23 @@
         }
       }
     },
+    "expenses" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EXPENSES"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "СТАТЬИ"
+          }
+        }
+      }
+    },
     "history_end" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -155,6 +175,23 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Моя история"
+          }
+        }
+      }
+    },
+    "my_expenses" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "My Expenses"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мои статьи"
           }
         }
       }
@@ -457,10 +494,13 @@
     "Валюта" : {
 
     },
-    "Экран настроек" : {
+    "По вашему запросу ничего не найдено" : {
 
     },
-    "Экран статей" : {
+    "Поиск" : {
+
+    },
+    "Экран настроек" : {
 
     }
   },

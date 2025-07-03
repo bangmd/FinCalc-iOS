@@ -88,6 +88,7 @@ struct AccountScreen: View {
             Label {
                 Text("balance_label")
                     .font(.system(size: Constants.primaryFontSize))
+                    .foregroundColor(viewModel.isEditing ? .gray : .black)
             } icon: {
                 Text("💰")
                     .font(.system(size: Constants.primaryFontSize))
@@ -96,7 +97,7 @@ struct AccountScreen: View {
             balanceTextField
         }
         .padding()
-        .background(viewModel.isEditing ? Color.white : Color.accentColor)
+        .background(viewModel.isEditing ? Color(.systemBackground) : Color.accentColor)
         .cornerRadius(Constants.cornerRadius)
     }
 
@@ -115,7 +116,7 @@ struct AccountScreen: View {
         .keyboardType(.decimalPad)
         .multilineTextAlignment(.trailing)
         .disabled(!viewModel.isEditing)
-        .foregroundColor(viewModel.isEditing ? .gray : .primary)
+        .foregroundColor(viewModel.isEditing ? .gray : .black)
         .font(.system(size: Constants.primaryFontSize, weight: .regular))
         .opacity(isBalanceHidden ? 0 : 1)
         .overlay(
@@ -133,10 +134,11 @@ struct AccountScreen: View {
     private var currencySection: some View {
         HStack {
             Text("currency_label")
+                .foregroundColor(viewModel.isEditing ? .gray : .black)
             Spacer()
             HStack {
                 Text(viewModel.currency.symbol)
-                    .foregroundColor(viewModel.isEditing ? .gray : .primary)
+                    .foregroundColor(viewModel.isEditing ? .gray : .black)
                 if viewModel.isEditing {
                     Image(systemName: "chevron.right")
                         .font(.system(size: Constants.chevronFontSize, weight: .bold))
@@ -150,7 +152,7 @@ struct AccountScreen: View {
             }
         }
         .padding()
-        .background(viewModel.isEditing ? Color.white : Color(.lightGreen))
+        .background(viewModel.isEditing ? Color(.systemBackground) : Color(.lightGreen))
         .cornerRadius(Constants.cornerRadius)
     }
 }

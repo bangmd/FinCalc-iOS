@@ -23,7 +23,7 @@ struct TransactionRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.category.name)
                     .font(.system(size: Constants.primaryFontSize))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 if let comment = transaction.comment, !comment.isEmpty {
                     Text(comment)
                         .font(.system(size: Constants.secondaryFontSize))
@@ -34,7 +34,7 @@ struct TransactionRow: View {
             let amount = Decimal(string: transaction.amount) ?? .zero
             Text(amount.formatted(currencyCode: transaction.account.currency))
                 .font(.system(size: Constants.primaryFontSize))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             Image(systemName: "chevron.right")
                 .font(.system(size: Constants.chevronFontSize, weight: .bold))
                 .foregroundColor(Color(.systemGray3))
