@@ -29,6 +29,41 @@
         }
       }
     },
+    "analysis_title" : {
+      "comment" : "Анализ",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analysis"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Анализ"
+          }
+        }
+      }
+    },
+    "back_title" : {
+      "comment" : "Назад",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Back"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        }
+      }
+    },
     "balance_label" : {
       "localizations" : {
         "en" : {
@@ -179,6 +214,9 @@
         }
       }
     },
+    "Key" : {
+      "extractionState" : "manual"
+    },
     "my_expenses" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -229,6 +267,7 @@
       }
     },
     "operations_header" : {
+      "comment" : "ОПЕРАЦИИ",
       "localizations" : {
         "en" : {
           "stringUnit" : {

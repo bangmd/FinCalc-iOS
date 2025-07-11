@@ -10,14 +10,15 @@ import SwiftUI
 struct TransactionsHistoryView: View {
     let direction: Direction
     @StateObject private var viewModel: TransactionsHistoryViewModel
-
+    @Environment(\.dismiss) private var dismiss
+    
     init(direction: Direction) {
         self.direction = direction
         _viewModel = StateObject(
             wrappedValue: TransactionsHistoryViewModel(direction: direction)
         )
     }
-
+    
     // MARK: - Subviews
     private var periodSection: some View {
         Section {
@@ -37,7 +38,7 @@ struct TransactionsHistoryView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func dateRow(label: String, selection: Binding<Date>) -> some View {
         HStack {
@@ -50,7 +51,7 @@ struct TransactionsHistoryView: View {
                 .cornerRadius(Constants.cornerRadius)
         }
     }
-
+    
     // MARK: - Operations Section
     private var operationsSection: some View {
         Section {
@@ -82,7 +83,7 @@ struct TransactionsHistoryView: View {
             }
         }
     }
-
+    
     // MARK: - Sort Picker
     private var sortMenu: some View {
         Menu {
@@ -99,21 +100,21 @@ struct TransactionsHistoryView: View {
             }
         } label: {
             HStack(spacing: 4) {
-            Text(viewModel.sortOption.titleKey)
+                Text(viewModel.sortOption.titleKey)
                 Image(systemName: "chevron.down")
             }
             .font(.body)
             .foregroundColor(.primary)
         }
     }
-
+    
     var body: some View {
         ZStack {
             List {
                 periodSection
                 operationsSection
             }
-
+            
             if viewModel.isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
@@ -124,12 +125,16 @@ struct TransactionsHistoryView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: EmptyView()) {
-                    Button {
-                    } label: {
-                        Image(systemName: "document")
-                            .tint(Color(.purpleForButton))
-                    }
+                NavigationLink {
+                    AnalysisViewControllerWrapper(
+                        direction: direction,
+                        fromDate: viewModel.fromDate,
+                        toDate: viewModel.toDate
+                    )
+                    .background(Color(.systemGray6).ignoresSafeArea(edges: .all))
+                } label: {
+                    Image(systemName: "document")
+                        .tint(Color(.purpleForButton))
                 }
             }
         }
