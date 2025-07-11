@@ -13,20 +13,26 @@ protocol TransactionsServiceProtocol {
         startDate: String?,
         endDate: String?
     ) async throws -> [TransactionResponse]
+    func updateTransaction(
+        id: Int,
+        request: TransactionRequest
+    ) async throws -> TransactionResponse
+    func createTransaction(request: TransactionRequest) async throws -> Transaction
+    func deleteTransaction(id: Int) async throws
 }
 
 final class TransactionsService: TransactionsServiceProtocol {
     // MARK: - Properties
-    private var nextId: Int {
+    private static var nextId: Int {
         (mockTransactionResponses.map { $0.id }.max() ?? 0) + 1
     }
-    private var mockTransactionResponses: [TransactionResponse] = [
+    private static var mockTransactionResponses: [TransactionResponse] = [
         TransactionResponse(
             id: 1,
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "150100.00", currency: "RUB"),
             category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
             amount: "500.00",
-            transactionDate: "2025-06-22T20:10:25.588Z",
+            transactionDate: "2025-07-11T20:10:25.588Z",
             comment: nil,
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -36,7 +42,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-21T10:01:25.000Z",
+            transactionDate: "2025-07-11T10:01:25.000Z",
             comment: "Кофе с утра",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -46,7 +52,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
             category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
             amount: "150.00",
-            transactionDate: "2025-06-21T10:01:25.000Z",
+            transactionDate: "2025-07-11T10:01:25.000Z",
             comment: "Кофе с утра",
             createdAt: "2025-06-10T20:10:25.588Z",
             updatedAt: "2025-06-10T20:10:25.588Z"
@@ -116,7 +122,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             account: AccountBrief(id: 1, name: "Основной счёт", balance: "100.00", currency: "RUB"),
             category: Category(id: 7, name: "Кэшбэк", emoji: "🎁", direction: .income),
             amount: "350.00",
-            transactionDate: "2025-06-22T18:45:00.000Z",
+            transactionDate: "2025-07-11T18:45:00.000Z",
             comment: "Кэшбэк Тинькофф",
             createdAt: "2025-06-13T18:45:10.000Z",
             updatedAt: "2025-06-13T18:45:10.000Z"
@@ -229,7 +235,7 @@ final class TransactionsService: TransactionsServiceProtocol {
         startDate: String? = nil,
         endDate: String? = nil
     ) async throws -> [TransactionResponse] {
-        return mockTransactionResponses.filter { transactionResponse in
+        return TransactionsService.mockTransactionResponses.filter { transactionResponse in
             guard transactionResponse.account.id == accountId else {
                 return false
             }
@@ -252,7 +258,37 @@ final class TransactionsService: TransactionsServiceProtocol {
 
     func createTransaction(request: TransactionRequest) async throws -> Transaction {
         let now = Date()
-        let id = nextId
+        let id = TransactionsService.nextId
+        
+        guard let account = TransactionsService.mockTransactionResponses.first?.account else {
+            throw NSError(
+                domain: "TransactionsService",
+                code: 500,
+                userInfo: [NSLocalizedDescriptionKey: "No account found"]
+            )
+        }
+        
+        let category = CategoriesService.mockCategories.first { $0.id == request.categoryId }
+        ?? Category(id: request.categoryId, name: "Категория", emoji: "🧩", direction: .outcome)
+        
+        let transactionResponse = TransactionResponse(
+            id: id,
+            account: account,
+            category: category,
+            amount: request.amount,
+            transactionDate: DateFormatters.iso8601.string(
+                from: DateFormatters.iso8601.date(
+                    from: request.transactionDate
+                ) ?? now
+            ),
+            comment: request.comment,
+            createdAt: DateFormatters.iso8601.string(
+                from: now
+            ),
+            updatedAt: DateFormatters.iso8601.string(from: now)
+        )
+        TransactionsService.mockTransactionResponses.append(transactionResponse)
+        
         return Transaction(
             id: id,
             accountId: request.accountId,
@@ -266,7 +302,7 @@ final class TransactionsService: TransactionsServiceProtocol {
     }
 
     func updateTransaction(id: Int, request: TransactionRequest) async throws -> TransactionResponse {
-        guard let index = mockTransactionResponses.firstIndex(where: { $0.id == id }) else {
+        guard let index = TransactionsService.mockTransactionResponses.firstIndex(where: { $0.id == id }) else {
             throw NSError(
                 domain: "TransactionsService",
                 code: 404,
@@ -275,7 +311,7 @@ final class TransactionsService: TransactionsServiceProtocol {
         }
 
         let now = DateFormatters.iso8601.string(from: Date())
-        let old = mockTransactionResponses[index]
+        let old = TransactionsService.mockTransactionResponses[index]
         let updated = TransactionResponse(
             id: id,
             account: old.account,
@@ -287,12 +323,12 @@ final class TransactionsService: TransactionsServiceProtocol {
             updatedAt: now
         )
 
-        mockTransactionResponses[index] = updated
+        TransactionsService.mockTransactionResponses[index] = updated
         return updated
     }
 
     func deleteTransaction(id: Int) async throws {
-        guard let index = mockTransactionResponses.firstIndex(where: { $0.id == id }) else {
+        guard let index = TransactionsService.mockTransactionResponses.firstIndex(where: { $0.id == id }) else {
             throw NSError(
                 domain: "TransactionsService",
                 code: 404,
@@ -300,7 +336,7 @@ final class TransactionsService: TransactionsServiceProtocol {
             )
         }
 
-        mockTransactionResponses.remove(at: index)
+        TransactionsService.mockTransactionResponses.remove(at: index)
     }
 }
 

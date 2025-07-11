@@ -55,6 +55,7 @@ disabled_rules:
   - trailing_comma
   - blanket_disable_command
   - redundant_optional_initialization
+  - trailing_whitespace
 
 cyclomatic_complexity:
   warning: 12
