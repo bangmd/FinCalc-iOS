@@ -10,12 +10,15 @@ import SwiftUI
 struct TransactionsListView: View {
     private let direction: Direction
     @StateObject private var viewModel: TransactionsListViewModel
-
+    @State private var isPresentingEditor = false
+    @State private var selectedTransaction: TransactionResponse? = nil
+    @State private var isPresentingCreate = false
+    
     init(direction: Direction) {
         self.direction = direction
         _viewModel = StateObject(wrappedValue: TransactionsListViewModel())
     }
-
+    
     var body: some View {
         VStack {
             headerView
@@ -29,8 +32,30 @@ struct TransactionsListView: View {
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
         .background(Color(.systemGray6).ignoresSafeArea())
+        .fullScreenCover(isPresented: $isPresentingCreate) {
+            EditTransactionView(
+                mode: .create,
+                direction: direction,
+                transactionsService: TransactionsService(),
+                bankAccountsService: BankAccountsService()
+            ) {
+                isPresentingCreate = false
+                Task { await viewModel.loadTransactions(for: direction) }
+            }
+        }
+        .fullScreenCover(item: $selectedTransaction) { transaction in
+            EditTransactionView(
+                mode: .edit(transaction),
+                direction: direction,
+                transactionsService: TransactionsService(),
+                bankAccountsService: BankAccountsService()
+            ) {
+                selectedTransaction = nil
+                Task { await viewModel.loadTransactions(for: direction) }
+            }
+        }
     }
-
+    
     // MARK: - Header
     private var headerView: some View {
         VStack {
@@ -38,7 +63,7 @@ struct TransactionsListView: View {
             titleView
         }
     }
-
+    
     private var historyButton: some View {
         HStack {
             Spacer()
@@ -49,7 +74,7 @@ struct TransactionsListView: View {
             }
         }
     }
-
+    
     private var titleView: some View {
         HStack {
             Text(direction == .outcome ? "today_outcomes" : "today_incomes")
@@ -58,7 +83,7 @@ struct TransactionsListView: View {
             Spacer()
         }
     }
-
+    
     // MARK: - Total Amount View
     private var totalAmountView: some View {
         HStack {
@@ -74,7 +99,7 @@ struct TransactionsListView: View {
         .background(Color(.systemBackground))
         .cornerRadius(Constants.cornerRadius)
     }
-
+    
     // MARK: - Operations
     @ViewBuilder
     private var operationsListView: some View {
@@ -84,7 +109,7 @@ struct TransactionsListView: View {
             transactionsListView
         }
     }
-
+    
     private var emptyStateView: some View {
         VStack(spacing: 12) {
             Text(direction == .outcome ? "💸" : "💰")
@@ -96,7 +121,7 @@ struct TransactionsListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.top, Constants.emptyStateTopPadding)
     }
-
+    
     private var transactionsListView: some View {
         VStack(spacing: 0) {
             Text("operations_header")
@@ -106,7 +131,7 @@ struct TransactionsListView: View {
                 .padding(.horizontal)
                 .padding(.bottom, Constants.bottomPaddingForHedder)
                 .frame(maxWidth: .infinity, alignment: .leading)
-
+            
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(Array(viewModel.transactions.enumerated()), id: \.element.id) { index, transaction in
@@ -124,6 +149,9 @@ struct TransactionsListView: View {
                                         []
                                 )
                             )
+                            .onTapGesture {
+                                selectedTransaction = transaction
+                            }
                         if index != viewModel.transactions.count - 1 {
                             Divider()
                                 .padding(.leading, Constants.dividerIndent)
@@ -133,12 +161,13 @@ struct TransactionsListView: View {
             }
         }
     }
-
+    
     // MARK: - Plus Button
     private var plusButton: some View {
         HStack {
             Spacer()
             Button {
+                isPresentingCreate = true
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: Constants.plusIconSize))

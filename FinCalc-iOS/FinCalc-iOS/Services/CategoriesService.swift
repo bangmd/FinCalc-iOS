@@ -8,11 +8,12 @@
 import Foundation
 protocol CategoriesServiceProtocol {
     func getAllCategories() async throws -> [Category]
+    func getCategoriesByType(direction: Direction) async throws -> [Category]
 }
 
 final class CategoriesService: CategoriesServiceProtocol {
     // MARK: - Properties
-    private let mockCategories: [Category] = [
+    public static let mockCategories: [Category] = [
         Category(id: 1, name: "Аренда квартиры", emoji: "🏠", direction: .outcome),
         Category(id: 2, name: "Одежда", emoji: "👔", direction: .outcome),
         Category(id: 3, name: "Зарплата", emoji: "💸", direction: .income),
@@ -37,10 +38,10 @@ final class CategoriesService: CategoriesServiceProtocol {
 
     // MARK: - Methods
     func getAllCategories() async throws -> [Category] {
-        return mockCategories
+        return CategoriesService.mockCategories
     }
 
     func getCategoriesByType(direction: Direction) async throws -> [Category] {
-        return mockCategories.filter { $0.direction == direction }
+        return CategoriesService.mockCategories.filter { $0.direction == direction }
     }
 }
