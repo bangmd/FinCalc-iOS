@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DB7CD8892E2B02E900216619 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DB7CD8882E2B02E900216619 /* Settings.bundle */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		DB8831B32DFAE97B000E2A9C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -18,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		DB2DDF792DF5DDDE0042D9E1 /* FinCalc-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FinCalc-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB7CD8882E2B02E900216619 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		DB8831AF2DFAE97B000E2A9C /* FinCalc-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FinCalc-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -55,6 +60,7 @@
 		DB2DDF702DF5DDDE0042D9E1 = {
 			isa = PBXGroup;
 			children = (
+				DB7CD8882E2B02E900216619 /* Settings.bundle */,
 				DB2DDF7B2DF5DDDE0042D9E1 /* FinCalc-iOS */,
 				DB8831B02DFAE97B000E2A9C /* FinCalc-iOSTests */,
 				DB2DDF7A2DF5DDDE0042D9E1 /* Products */,
@@ -167,6 +173,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB7CD8892E2B02E900216619 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
