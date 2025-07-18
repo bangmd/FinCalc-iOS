@@ -49,6 +49,7 @@ struct FinCalc: App {
         WindowGroup {
             NavigationStack {
                 TabBarView()
+                    .environmentObject(NetworkMonitor.shared) 
                     .task {
                         await AccountViewModel.preloadAccountInfo(service: bankAccountsService)
                     }

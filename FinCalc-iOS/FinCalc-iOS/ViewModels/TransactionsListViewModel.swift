@@ -5,19 +5,42 @@
 //  Created by Soslan Dzampaev on 18.06.2025.
 //
 
+import Combine
+import Network
 import Foundation
 
 final class TransactionsListViewModel: ObservableObject {
     @MainActor @Published var isLoading: Bool = false
     @MainActor @Published var errorMessage: String?
-
     @MainActor  @Published var transactions: [TransactionResponse] = []
     @MainActor @Published var totalAmount: Decimal = 0
+
+    private var cancellables = Set<AnyCancellable>()
+    @MainActor @Published var isOfflineMode: Bool = false
+    @MainActor @Published var showOfflineBanner: Bool = false
 
     private let service: TransactionsServiceProtocol
 
     init(service: TransactionsServiceProtocol) {
         self.service = service
+
+        NetworkMonitor.shared.$isConnected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                Task { @MainActor in
+                    self?.isOfflineMode = !isConnected
+                    if !isConnected {
+                        self?.showOfflineBanner = true
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            self?.showOfflineBanner = false
+                        }
+                    } else {
+                        self?.showOfflineBanner = false
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     @MainActor

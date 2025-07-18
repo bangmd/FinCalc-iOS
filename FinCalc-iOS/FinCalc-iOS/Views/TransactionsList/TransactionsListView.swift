@@ -15,7 +15,8 @@ struct TransactionsListView: View {
     @State private var selectedTransaction: TransactionResponse? = nil
     @State private var isPresentingCreate = false
     @State private var showAlert = false
-
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
+    
     init(direction: Direction, dependencies: AppDependencies) {
         self.dependencies = dependencies
         self.direction = direction
@@ -53,7 +54,7 @@ struct TransactionsListView: View {
                 bankAccountsService: dependencies.bankAccountsService
             ) {
                 print("onComplete в TransactionsListView")
-
+                
                 selectedTransaction = nil
                 Task { await viewModel.loadTransactions(for: direction) }
             }
@@ -83,6 +84,30 @@ struct TransactionsListView: View {
         .overlay(alignment: .bottomTrailing) {
             plusButton
                 .padding()
+        }
+        .overlay(alignment: .top) {
+            if !networkMonitor.isConnected {
+                VStack {
+                    HStack {
+                        Image(systemName: "wifi.exclamationmark")
+                            .foregroundColor(.white)
+                        Text("Оффлайн режим")
+                            .foregroundColor(.white)
+                            .font(.callout)
+                            .bold()
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(Color.red.opacity(0.92))
+                    .cornerRadius(12)
+                    .shadow(radius: 8)
+                    Spacer()
+                }
+                .padding(.top, 44)
+                .padding(.horizontal, 16)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(999)
+            }
         }
     }
     
