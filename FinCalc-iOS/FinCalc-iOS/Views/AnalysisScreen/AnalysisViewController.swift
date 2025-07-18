@@ -6,7 +6,8 @@
 //
 import UIKit
 
-final class AnalysisViewController: UIViewController{
+final class AnalysisViewController: UIViewController {
+    let dependencies = AppDependencies()
     private let viewModel: AnalysisViewModel
     private var tableHeightConstraint: NSLayoutConstraint!
     private var operationsTableHeightConstraint: NSLayoutConstraint!
@@ -68,7 +69,8 @@ final class AnalysisViewController: UIViewController{
         self.viewModel = AnalysisViewModel(
             direction: direction,
             fromDate: fromDate,
-            toDate: toDate
+            toDate: toDate,
+            service: dependencies.transactionsService
         )
         super.init(nibName: nil, bundle: nil)
     }
@@ -84,6 +86,10 @@ final class AnalysisViewController: UIViewController{
         super.viewDidLoad()
         setupView()
         bindViewModel()
+        
+        Task {
+            await viewModel.loadTransactions()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -142,24 +148,25 @@ final class AnalysisViewController: UIViewController{
     private func bindViewModel() {
         viewModel.onDataChanged = { [weak self] in
             guard let self = self else { return }
-            self.periodTableView.reloadData()
-            self.operationsTableView.reloadData()
+            DispatchQueue.main.async {
+                self.periodTableView.reloadData()
+                self.operationsTableView.reloadData()
+                self.updateTableHeights()
+            }
         }
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        periodTableView.layoutIfNeeded()
-        let periodHeight = periodTableView.contentSize.height
-        if tableHeightConstraint.constant != periodHeight {
-            tableHeightConstraint.constant = periodHeight
+
+    private func updateTableHeights() {
+        self.periodTableView.layoutIfNeeded()
+        let periodHeight = self.periodTableView.contentSize.height
+        if self.tableHeightConstraint.constant != periodHeight {
+            self.tableHeightConstraint.constant = periodHeight
         }
-        
-        operationsTableView.layoutIfNeeded()
-        let opsHeight = operationsTableView.contentSize.height
-        if operationsTableHeightConstraint.constant != opsHeight {
-            operationsTableHeightConstraint.constant = opsHeight
+
+        self.operationsTableView.layoutIfNeeded()
+        let opsHeight = self.operationsTableView.contentSize.height
+        if self.operationsTableHeightConstraint.constant != opsHeight {
+            self.operationsTableHeightConstraint.constant = opsHeight
         }
     }
 }
@@ -238,7 +245,7 @@ extension AnalysisViewController: UITableViewDataSource, UITableViewDelegate {
     private func makeSumCell() -> UITableViewCell {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: "SumCell")
         cell.textLabel?.text = NSLocalizedString("sum_title", comment: "")
-        cell.detailTextLabel?.text = viewModel.totalAmount.formatted(currencyCode: "RUB")
+        cell.detailTextLabel?.text = viewModel.totalAmount.formatted(currencyCode: CurrencyStore.shared.currentCurrency)
         cell.detailTextLabel?.textColor = .black
         cell.selectionStyle = .none
         return cell

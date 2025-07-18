@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ExpensesScreen: View {
     @StateObject private var viewModel: ExpensesViewModel
+    @State private var showAlert = false
 
     init() {
-        _viewModel = StateObject(wrappedValue: ExpensesViewModel())
+        let dependences = AppDependencies()
+        _viewModel = StateObject(wrappedValue: ExpensesViewModel(service: dependences.categoriesService))
     }
 
     var body: some View {
@@ -25,6 +27,26 @@ struct ExpensesScreen: View {
         .onAppear {
             Task {
                 await viewModel.loadArticles()
+            }
+        }
+        .onChange(of: viewModel.errorMessage) {
+            showAlert = viewModel.errorMessage != nil
+        }
+        .alert("Ошибка", isPresented: $showAlert) {
+            Button("Ок") { viewModel.errorMessage = nil }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+        .overlay {
+            if viewModel.isLoading {
+                ZStack {
+                    Color.black.opacity(0.15).ignoresSafeArea()
+                    ProgressView("Загрузка...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemBackground)))
+                        .shadow(radius: 6)
+                }
             }
         }
         .gesture(

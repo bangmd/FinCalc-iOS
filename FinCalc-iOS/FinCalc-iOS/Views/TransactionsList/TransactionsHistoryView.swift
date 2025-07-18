@@ -11,11 +11,17 @@ struct TransactionsHistoryView: View {
     let direction: Direction
     @StateObject private var viewModel: TransactionsHistoryViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showAlert = false
+    @State private var selectedTransaction: TransactionResponse?
     
     init(direction: Direction) {
+        let dependencies = AppDependencies()
         self.direction = direction
         _viewModel = StateObject(
-            wrappedValue: TransactionsHistoryViewModel(direction: direction)
+            wrappedValue: TransactionsHistoryViewModel(
+                direction: direction,
+                service: dependencies.transactionsService
+            )
         )
     }
     
@@ -34,7 +40,10 @@ struct TransactionsHistoryView: View {
                 Text("sum_title")
                     .font(.body)
                 Spacer()
-                Text(viewModel.totalAmount.formatted(currencyCode: "RUB"))
+                Text(
+                    viewModel.totalAmount
+                        .formatted(currencyCode: CurrencyStore.shared.currentCurrency)
+                )
             }
         }
     }
@@ -69,7 +78,12 @@ struct TransactionsHistoryView: View {
                 .padding(.vertical, Constants.plusButtonSize)
             } else {
                 ForEach(viewModel.transactions) { transaction in
-                    HistoryRow(transaction: transaction)
+                    HistoryRow(
+                        transaction: transaction,
+                        onTap: {
+                            selectedTransaction = transaction
+                        }
+                    )
                 }
             }
         } header: {
@@ -141,6 +155,28 @@ struct TransactionsHistoryView: View {
         .background(Color(.systemGray6).ignoresSafeArea())
         .task {
             await viewModel.loadTransactions()
+        }
+        .onChange(of: viewModel.errorMessage) {
+            showAlert = viewModel.errorMessage != nil
+        }
+        .alert("Ошибка", isPresented: $showAlert) {
+            Button("Ок") {
+                viewModel.errorMessage = nil
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+        .fullScreenCover(item: $selectedTransaction) { transaction in
+            let dependencies = AppDependencies()
+            EditTransactionView(
+                mode: .edit(transaction),
+                direction: transaction.category.direction,
+                transactionsService: dependencies.transactionsService,
+                bankAccountsService: dependencies.bankAccountsService
+            ) {
+                selectedTransaction = nil
+                Task { await viewModel.loadTransactions() }
+            }
         }
     }
 }

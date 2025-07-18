@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct EditTransactionView: View {
+    let dependences = AppDependencies()
     @State private var showToast = false
+    @State private var isLoading = false
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: EditTransactionViewModel
     let onComplete: () -> Void
@@ -49,7 +51,7 @@ struct EditTransactionView: View {
         .onAppear {
             if viewModel.categories.isEmpty {
                 Task {
-                    await viewModel.loadCategories(categoriesService: CategoriesService())
+                    await viewModel.loadCategories(categoriesService: dependences.categoriesService)
                 }
             }
         }
@@ -63,7 +65,8 @@ struct EditTransactionView: View {
             TextField("0", text: $viewModel.amount)
                 .multilineTextAlignment(.trailing)
                 .keyboardType(.decimalPad)
-            Text("₽").foregroundColor(.secondary)
+            Text(CurrencyStore.shared.symbol(for: CurrencyStore.shared.currentCurrency))
+                .foregroundColor(.secondary)
         }
         .frame(height: 44)
         .padding(.horizontal)
@@ -133,10 +136,19 @@ struct EditTransactionView: View {
             if viewModel.isEditing {
                 HStack {
                     Button {
+                        isLoading = true
                         viewModel.deleteTransaction { success in
-                            if success {
-                                dismiss()
-                                onComplete()
+                            DispatchQueue.main.async {
+                                isLoading = false
+                                if success {
+                                    dismiss()
+                                    onComplete()
+                                } else {
+                                    showToast = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                                        withAnimation { showToast = false }
+                                    }
+                                }
                             }
                         }
                     } label: {
@@ -173,10 +185,21 @@ struct EditTransactionView: View {
                             }
                         }
                     } else {
+                        isLoading = true
                         viewModel.saveOrCreate { success in
-                            if success {
-                                dismiss()
-                                onComplete()
+                            DispatchQueue.main.async {
+                                isLoading = false
+                                if success {
+                                    dismiss()
+                                    onComplete()
+                                } else {
+                                    showToast = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                                        withAnimation {
+                                            showToast = false
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -198,6 +221,18 @@ struct EditTransactionView: View {
         }
         .background(Color(.systemGray6).ignoresSafeArea())
         .overlay(toastView())
+        .overlay {
+            if isLoading {
+                ZStack {
+                    Color.black.opacity(0.15).ignoresSafeArea()
+                    ProgressView("Сохраняем...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemBackground)))
+                        .shadow(radius: 6)
+                }
+            }
+        }
     }
     
     private func row(title: String, value: String, chevron: Bool = false) -> some View {

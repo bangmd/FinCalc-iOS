@@ -36,9 +36,10 @@ enum TabBarItem: String, Identifiable, CaseIterable {
 
 // MARK: - TabBarView
 struct TabBarView: View {
+    let dependencies = AppDependencies()
     @State private var isBalanceHidden = false
-    @StateObject private var accountVM = AccountViewModel()
-
+    @StateObject private var accountVM = AccountViewModel(service: AppDependencies().bankAccountsService)
+    
     var body: some View {
         TabView {
             ForEach(TabBarItem.allCases) { item in
@@ -62,9 +63,15 @@ struct TabBarView: View {
     private func screen(for item: TabBarItem) -> some View {
         switch item {
         case .outcomes:
-            TransactionsListView(direction: .outcome)
+            TransactionsListView(
+                direction: .outcome,
+                dependencies: dependencies
+            )
         case .incomes:
-            TransactionsListView(direction: .income)
+            TransactionsListView(
+                direction: .income,
+                dependencies: dependencies
+            )
         case .account:
             ZStack {
                 AccountScreen(viewModel: accountVM, isBalanceHidden: $isBalanceHidden)

@@ -9,6 +9,9 @@ import SwiftUI
 
 struct HistoryRow: View {
     let transaction: TransactionResponse
+    let onTap: () -> Void
+    @State private var showEdit = false
+    
     var body: some View {
         HStack(spacing: Constants.rowHorizontalPadding) {
             if transaction.category.direction == .outcome {
@@ -52,18 +55,8 @@ struct HistoryRow: View {
                 ))
                 .foregroundColor(Color(.systemGray3))
         }
+        .onTapGesture {
+            onTap()
+        }
     }
-}
-
-#Preview {
-    HistoryRow(transaction: TransactionResponse(
-        id: 1,
-        account: AccountBrief(id: 1, name: "Main", balance: "1000.00", currency: "RUB"),
-        category: Category(id: 1, name: "Test", emoji: "🛠", direction: .outcome),
-        amount: "123.45",
-        transactionDate: "2025-06-20T22:01:00.000Z",
-        comment: "Sample comment",
-        createdAt: "",
-        updatedAt: "2025-06-20T21:01:00.000Z"
-    ))
 }
