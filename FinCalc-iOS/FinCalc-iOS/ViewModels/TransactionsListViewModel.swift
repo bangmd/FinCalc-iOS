@@ -5,24 +5,42 @@
 //  Created by Soslan Dzampaev on 18.06.2025.
 //
 
+import Combine
+import Network
 import Foundation
 
 final class TransactionsListViewModel: ObservableObject {
     @MainActor @Published var isLoading: Bool = false
     @MainActor @Published var errorMessage: String?
-
     @MainActor  @Published var transactions: [TransactionResponse] = []
     @MainActor @Published var totalAmount: Decimal = 0
 
-    private let service: TransactionsServiceProtocol
-    private let accountId: Int
+    private var cancellables = Set<AnyCancellable>()
+    @MainActor @Published var isOfflineMode: Bool = false
+    @MainActor @Published var showOfflineBanner: Bool = false
 
-    init(
-        service: TransactionsServiceProtocol = TransactionsService(),
-        accountId: Int = 1
-    ) {
+    private let service: TransactionsServiceProtocol
+
+    init(service: TransactionsServiceProtocol) {
         self.service = service
-        self.accountId = accountId
+
+        NetworkMonitor.shared.$isConnected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                Task { @MainActor in
+                    self?.isOfflineMode = !isConnected
+                    if !isConnected {
+                        self?.showOfflineBanner = true
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            self?.showOfflineBanner = false
+                        }
+                    } else {
+                        self?.showOfflineBanner = false
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     @MainActor
@@ -47,13 +65,15 @@ final class TransactionsListViewModel: ObservableObject {
 
         do {
             let responses = try await service.fetchTransactions(
-                accountId: accountId,
+                accountId: CurrencyStore.shared.currentAccountId,
                 startDate: startDateString,
                 endDate: endDateString
             )
 
+            let calendar = Calendar.current
             let filteredResponses = responses.filter {
-                $0.category.direction == direction
+                $0.category.direction == direction &&
+                calendar.isDateInToday($0.date)
             }
 
             self.transactions = filteredResponses

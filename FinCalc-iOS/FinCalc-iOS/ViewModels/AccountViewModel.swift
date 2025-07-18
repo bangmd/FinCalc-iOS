@@ -10,7 +10,7 @@ import Foundation
 final class AccountViewModel: ObservableObject {
     private let service: BankAccountsServiceProtocol
 
-    init(service: BankAccountsServiceProtocol = BankAccountsService()) {
+    init(service: BankAccountsServiceProtocol) {
         self.service = service
     }
 
@@ -30,6 +30,10 @@ final class AccountViewModel: ObservableObject {
             self.account = loaded
             self.balance = loaded?.balance ?? 0
             self.currency = Currency(rawValue: loaded?.currency ?? "") ?? .rub
+            CurrencyStore.shared.currentCurrency = self.currency.rawValue
+            if let id = loaded?.id {
+                CurrencyStore.shared.currentAccountId = id
+            }
             self.name = loaded?.name ?? ""
         } catch {
             print("Ошибка загрузки аккаунта: \(error)")
@@ -50,6 +54,10 @@ final class AccountViewModel: ObservableObject {
             self.account = updated
             self.balance = updated?.balance ?? 0
             self.currency = Currency(rawValue: updated?.currency ?? "") ?? .rub
+            CurrencyStore.shared.currentCurrency = self.currency.rawValue
+            if let id = updated?.id {
+                CurrencyStore.shared.currentAccountId = id
+            }
             self.name = updated?.name ?? ""
             self.isEditing = false
         } catch {
@@ -69,5 +77,19 @@ final class AccountViewModel: ObservableObject {
             filtered = "\(parts[0]).\(truncated)"
         }
         return filtered
+    }
+    
+    static func preloadAccountInfo(service: BankAccountsServiceProtocol) async {
+        do {
+            let loaded = try await service.fetchAccount()
+            if let id = loaded?.id {
+                CurrencyStore.shared.currentAccountId = id
+            }
+            if let currency = loaded?.currency {
+                CurrencyStore.shared.currentCurrency = currency
+            }
+        } catch {
+            print("Ошибка при предварительной загрузке аккаунта: \(error)")
+        }
     }
 }

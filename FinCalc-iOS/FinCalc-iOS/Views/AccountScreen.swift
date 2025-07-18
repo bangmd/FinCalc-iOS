@@ -181,7 +181,3 @@ extension AccountScreen {
         await viewModel.loadAccount()
     }
 }
-
-#Preview {
-    AccountScreen(viewModel: AccountViewModel())
-}

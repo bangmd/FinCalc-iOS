@@ -9,9 +9,26 @@ import SwiftUI
 
 @main
 struct FinCalc: App {
+    let networkClient = NetworkClient(session: .shared, token: "wWVUPYHncK4dcidYz6eUxOsg")
+    let transactionsService: TransactionsService
+    let bankAccountsService: BankAccountsService
+    
     init() {
+        self.transactionsService = TransactionsService(
+            client: networkClient,
+            persistence: AppDependencies.transactionsPersistence,
+            backup: AppDependencies.transactionsBackup,
+            categoriesPersistence: AppDependencies.categoriesPersistence,
+            accountsPersistence: AppDependencies.accountsPersistence,
+            accountsBackup: AppDependencies.accountsBackup
+        )
+        self.bankAccountsService = BankAccountsService(
+            client: networkClient,
+            persistence: AppDependencies.accountsPersistence,
+            backup: AppDependencies.accountsBackup
+        )
         configureTabBarAppearance()
-
+        
         Task { @MainActor in
             let textField = UITextField(frame: .zero)
             if let window = UIApplication.shared
@@ -27,11 +44,15 @@ struct FinCalc: App {
             }
         }
     }
-
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack {
                 TabBarView()
+                    .environmentObject(NetworkMonitor.shared) 
+                    .task {
+                        await AccountViewModel.preloadAccountInfo(service: bankAccountsService)
+                    }
             }
         }
     }

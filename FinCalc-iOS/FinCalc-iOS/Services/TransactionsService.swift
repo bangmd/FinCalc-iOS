@@ -21,322 +21,302 @@ protocol TransactionsServiceProtocol {
     func deleteTransaction(id: Int) async throws
 }
 
+private struct EmptyRequest: Encodable {}
 final class TransactionsService: TransactionsServiceProtocol {
-    // MARK: - Properties
-    private static var nextId: Int {
-        (mockTransactionResponses.map { $0.id }.max() ?? 0) + 1
+    private let client: NetworkClient
+    private let persistence: TransactionsPersistenceProtocol
+    private let backup: TransactionsBackupPersistenceProtocol
+    private let categoriesPersistence: CategoriesPersistenceProtocol
+    private let accountsPersistence: BankAccountsPersistenceProtocol
+    private let accountsBackup: AccountsBackupPersistenceProtocol
+    
+    init(
+        client: NetworkClient,
+        persistence: TransactionsPersistenceProtocol,
+        backup: TransactionsBackupPersistenceProtocol,
+        categoriesPersistence: CategoriesPersistenceProtocol,
+        accountsPersistence: BankAccountsPersistenceProtocol,
+        accountsBackup: AccountsBackupPersistenceProtocol
+    ) {
+        self.client = client
+        self.persistence = persistence
+        self.backup = backup
+        self.categoriesPersistence = categoriesPersistence
+        self.accountsPersistence = accountsPersistence
+        self.accountsBackup = accountsBackup
     }
-    private static var mockTransactionResponses: [TransactionResponse] = [
-        TransactionResponse(
-            id: 1,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "150100.00", currency: "RUB"),
-            category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
-            amount: "500.00",
-            transactionDate: "2025-07-11T20:10:25.588Z",
-            comment: nil,
-            createdAt: "2025-06-10T20:10:25.588Z",
-            updatedAt: "2025-06-10T20:10:25.588Z"
-        ),
-        TransactionResponse(
-            id: 2,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
-            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
-            amount: "150.00",
-            transactionDate: "2025-07-11T10:01:25.000Z",
-            comment: "Кофе с утра",
-            createdAt: "2025-06-10T20:10:25.588Z",
-            updatedAt: "2025-06-10T20:10:25.588Z"
-        ),
-        TransactionResponse(
-            id: 3,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
-            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
-            amount: "150.00",
-            transactionDate: "2025-07-11T10:01:25.000Z",
-            comment: "Кофе с утра",
-            createdAt: "2025-06-10T20:10:25.588Z",
-            updatedAt: "2025-06-10T20:10:25.588Z"
-        ),
-        TransactionResponse(
-            id: 4,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "1000.00", currency: "RUB"),
-            category: Category(id: 4, name: "Техника", emoji: "🚀", direction: .outcome),
-            amount: "150000.00",
-            transactionDate: "2025-06-21T10:01:25.000Z",
-            comment: "Ракета",
-            createdAt: "2025-06-10T20:10:25.588Z",
-            updatedAt: "2025-06-10T20:10:25.588Z"
-        ),
-        TransactionResponse(
-            id: 5,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "2000.00", currency: "RUB"),
-            category: Category(id: 3, name: "Продукты", emoji: "🛒", direction: .outcome),
-            amount: "2300.00",
-            transactionDate: "2025-06-21T15:30:00.000Z",
-            comment: "Гипермаркет",
-            createdAt: "2025-06-18T15:31:00.000Z",
-            updatedAt: "2025-06-18T15:31:00.000Z"
-        ),
-        TransactionResponse(
-            id: 6,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "50000.00", currency: "RUB"),
-            category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
-            amount: "70000.00",
-            transactionDate: "2025-06-21T09:00:00.000Z",
-            comment: "Зарплата за июнь",
-            createdAt: "2025-06-15T09:00:01.000Z",
-            updatedAt: "2025-06-15T09:00:01.000Z"
-        ),
-        TransactionResponse(
-            id: 7,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "3000.00", currency: "RUB"),
-            category: Category(id: 5, name: "Транспорт", emoji: "🚇", direction: .outcome),
-            amount: "58.00",
-            transactionDate: "2025-06-20T08:20:00.000Z",
-            comment: "Метро",
-            createdAt: "2025-06-17T08:20:30.000Z",
-            updatedAt: "2025-06-17T08:20:30.000Z"
-        ),
-        TransactionResponse(
-            id: 8,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "150.00", currency: "RUB"),
-            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
-            amount: "180.00",
-            transactionDate: "2025-06-20T10:05:00.000Z",
-            comment: "Латте",
-            createdAt: "2025-06-16T10:05:10.000Z",
-            updatedAt: "2025-06-16T10:05:10.000Z"
-        ),
-        TransactionResponse(
-            id: 9,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "500.00", currency: "RUB"),
-            category: Category(id: 6, name: "Инвестиции", emoji: "📈", direction: .outcome),
-            amount: "10000.00",
-            transactionDate: "2025-06-20T12:00:00.000Z",
-            comment: nil,
-            createdAt: "2025-06-14T12:00:10.000Z",
-            updatedAt: "2025-06-14T12:00:10.000Z"
-        ),
-        TransactionResponse(
-            id: 10,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "100.00", currency: "RUB"),
-            category: Category(id: 7, name: "Кэшбэк", emoji: "🎁", direction: .income),
-            amount: "350.00",
-            transactionDate: "2025-07-11T18:45:00.000Z",
-            comment: "Кэшбэк Тинькофф",
-            createdAt: "2025-06-13T18:45:10.000Z",
-            updatedAt: "2025-06-13T18:45:10.000Z"
-        ),
-        TransactionResponse(
-            id: 11,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "180.00", currency: "RUB"),
-            category: Category(id: 3, name: "Продукты", emoji: "🛒", direction: .outcome),
-            amount: "1240.00",
-            transactionDate: "2025-06-12T17:20:00.000Z",
-            comment: "Ужин",
-            createdAt: "2025-06-12T17:20:05.000Z",
-            updatedAt: "2025-06-12T17:20:05.000Z"
-        ),
-        TransactionResponse(
-            id: 12,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "400.00", currency: "RUB"),
-            category: Category(id: 8, name: "Интернет", emoji: "🌐", direction: .outcome),
-            amount: "800.00",
-            transactionDate: "2025-06-11T11:00:00.000Z",
-            comment: "Оплата интернета",
-            createdAt: "2025-06-11T11:00:10.000Z",
-            updatedAt: "2025-06-11T11:00:10.000Z"
-        ),
-        TransactionResponse(
-            id: 13,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "520.00", currency: "RUB"),
-            category: Category(id: 9, name: "Хобби", emoji: "🎸", direction: .outcome),
-            amount: "2500.00",
-            transactionDate: "2025-06-10T19:30:00.000Z",
-            comment: "Струны",
-            createdAt: "2025-06-10T19:30:05.000Z",
-            updatedAt: "2025-06-10T19:30:05.000Z"
-        ),
-        TransactionResponse(
-            id: 14,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "160.00", currency: "RUB"),
-            category: Category(id: 10, name: "Подарки", emoji: "🎂", direction: .outcome),
-            amount: "3200.00",
-            transactionDate: "2025-06-09T14:10:00.000Z",
-            comment: "День рождения",
-            createdAt: "2025-06-09T14:10:05.000Z",
-            updatedAt: "2025-06-09T14:10:05.000Z"
-        ),
-        TransactionResponse(
-            id: 15,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "500.00", currency: "RUB"),
-            category: Category(id: 1, name: "Зарплата", emoji: "💰", direction: .income),
-            amount: "65000.00",
-            transactionDate: "2025-06-21T09:00:00.000Z",
-            comment: "Зарплата за май",
-            createdAt: "2025-05-31T09:00:10.000Z",
-            updatedAt: "2025-05-31T09:00:10.000Z"
-        ),
-        TransactionResponse(
-            id: 16,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "280.00", currency: "RUB"),
-            category: Category(id: 2, name: "Кофе", emoji: "☕️", direction: .outcome),
-            amount: "190.00",
-            transactionDate: "2025-06-02T09:30:00.000Z",
-            comment: "Флэт у офиса",
-            createdAt: "2025-06-02T09:30:05.000Z",
-            updatedAt: "2025-06-02T09:30:05.000Z"
-        ),
-        TransactionResponse(
-            id: 17,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "123.00", currency: "RUB"),
-            category: Category(id: 11, name: "Обучение", emoji: "📚", direction: .outcome),
-            amount: "5000.00",
-            transactionDate: "2025-06-05T13:00:00.000Z",
-            comment: "Swift курс",
-            createdAt: "2025-06-05T13:00:10.000Z",
-            updatedAt: "2025-06-05T13:00:10.000Z"
-        ),
-        TransactionResponse(
-            id: 18,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "80.00", currency: "RUB"),
-            category: Category(id: 7, name: "Кэшбэк", emoji: "🎁", direction: .income),
-            amount: "120.00",
-            transactionDate: "2025-06-03T12:00:00.000Z",
-            comment: "Кэшбэк Ozon",
-            createdAt: "2025-06-03T12:00:05.000Z",
-            updatedAt: "2025-06-03T12:00:05.000Z"
-        ),
-        TransactionResponse(
-            id: 19,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "300.00", currency: "RUB"),
-            category: Category(id: 3, name: "Продукты", emoji: "🛒", direction: .outcome),
-            amount: "2150.00",
-            transactionDate: "2025-06-01T18:20:00.000Z",
-            comment: "Ашан",
-            createdAt: "2025-06-01T18:20:05.000Z",
-            updatedAt: "2025-06-01T18:20:05.000Z"
-        ),
-        TransactionResponse(
-            id: 20,
-            account: AccountBrief(id: 1, name: "Основной счёт", balance: "999.00", currency: "RUB"),
-            category: Category(id: 12, name: "Ресторан", emoji: "🍣", direction: .outcome),
-            amount: "4800.00",
-            transactionDate: "2025-06-06T21:15:00.000Z",
-            comment: "Ужин в суши-баре",
-            createdAt: "2025-06-06T21:15:05.000Z",
-            updatedAt: "2025-06-06T21:15:05.000Z"
-        )
-    ]
-
+    
     // MARK: - Methods
+    
     func fetchTransactions(
         accountId: Int,
         startDate: String? = nil,
         endDate: String? = nil
     ) async throws -> [TransactionResponse] {
-        return TransactionsService.mockTransactionResponses.filter { transactionResponse in
-            guard transactionResponse.account.id == accountId else {
-                return false
+        try await syncBackupToBackendIfNeeded()
+        
+        var endpoint = "transactions/account/\(accountId)/period"
+        var queryItems: [URLQueryItem] = []
+        if let startDate {
+            queryItems.append(URLQueryItem(name: "startDate", value: String(startDate.prefix(10))))
+        }
+        if let endDate {
+            queryItems.append(URLQueryItem(name: "endDate", value: String(endDate.prefix(10))))
+        }
+        if !queryItems.isEmpty {
+            var components = URLComponents()
+            components.queryItems = queryItems
+            if let query = components.percentEncodedQuery {
+                endpoint.append("?\(query)")
             }
-            guard let transactionDate = DateFormatters.iso8601.date(from: transactionResponse.transactionDate) else {
-                return false
+        }
+        
+        do {
+            let remoteTransactions = try await client.request(
+                endpoint: endpoint,
+                method: "GET",
+                responseType: [TransactionResponse].self
+            )
+            for transaction in remoteTransactions {
+                try await persistence.create(transaction)
             }
-            if let startDateString = startDate,
-               let startDateValue = DateFormatters.iso8601.date(from: startDateString),
-               transactionDate < startDateValue {
-                return false
+            return remoteTransactions
+        } catch {
+            let allLocal = try await persistence.fetchAll()
+            let backupList = try await backup.allBackups().map { $0.transaction }
+            let merged = mergeTransactions(primary: allLocal, secondary: backupList)
+            let filtered = merged.filter { trx in
+                guard trx.account.id == accountId else { return false }
+                let trxDate = DateFormatters.iso8601.date(from: trx.transactionDate)
+                let start = startDate.flatMap { DateFormatters.iso8601.date(from: $0) }
+                let end = endDate.flatMap { DateFormatters.iso8601.date(from: $0) }
+                if let trxDate, let start, let end {
+                    return (trxDate >= start && trxDate <= end)
+                }
+                return true
             }
-            if let endDateString = endDate,
-               let endDateValue = DateFormatters.iso8601.date(from: endDateString),
-               transactionDate > endDateValue {
-                return false
-            }
-            return true
+            return filtered
         }
     }
-
+    
     func createTransaction(request: TransactionRequest) async throws -> Transaction {
-        let now = Date()
-        let id = TransactionsService.nextId
-        
-        guard let account = TransactionsService.mockTransactionResponses.first?.account else {
-            throw NSError(
-                domain: "TransactionsService",
-                code: 500,
-                userInfo: [NSLocalizedDescriptionKey: "No account found"]
+        do {
+            let transaction = try await client.request(
+                endpoint: "transactions",
+                method: "POST",
+                body: request,
+                responseType: Transaction.self
             )
+            let response = TransactionResponse(
+                id: transaction.id,
+                account: AccountBrief(
+                    id: transaction.accountId, name: "", balance: "", currency: ""),
+                category: Category(
+                    id: transaction.categoryId, name: "", emoji: "?", direction: .outcome),
+                amount: transaction.amount,
+                transactionDate: transaction.transactionDate,
+                comment: transaction.comment,
+                createdAt: transaction.createdAt,
+                updatedAt: transaction.updatedAt
+            )
+            try await persistence.create(response)
+            try await backup.deleteBackup(id: transaction.id)
+            return transaction
+        } catch {
+            let category = await categoriesPersistence.category(
+                by: request.categoryId
+            ) ?? Category(
+                id: request.categoryId,
+                name: "?",
+                emoji: "?",
+                direction: .outcome
+            )
+            let tempId = Int(Date().timeIntervalSince1970)
+            let offlineResponse = TransactionResponse(
+                id: tempId,
+                account: AccountBrief(
+                    id: request.accountId, name: "", balance: "", currency: ""),
+                category: category,
+                amount: request.amount,
+                transactionDate: request.transactionDate,
+                comment: request.comment,
+                createdAt: request.transactionDate,
+                updatedAt: request.transactionDate
+            )
+            try await persistence.create(offlineResponse)
+            try await backup.addOrUpdateBackup(TransactionBackup(
+                id: tempId, action: .create, transaction: offlineResponse
+            ))
+            let accountId = request.accountId
+            if let account = try? await accountsPersistence.account(by: accountId) {
+                let delta = Decimal(string: request.amount) ?? 0
+                let newBalance = account.balance + delta
+                let updatedAccount = account.withUpdatedBalance(newBalance)
+                try? await accountsBackup.addOrUpdateBackup(AccountBackup(
+                    id: accountId,
+                    action: .update,
+                    account: updatedAccount
+                ))
+            }
+            throw error
         }
-        
-        let category = CategoriesService.mockCategories.first { $0.id == request.categoryId }
-        ?? Category(id: request.categoryId, name: "Категория", emoji: "🧩", direction: .outcome)
-        
-        let transactionResponse = TransactionResponse(
-            id: id,
-            account: account,
-            category: category,
-            amount: request.amount,
-            transactionDate: DateFormatters.iso8601.string(
-                from: DateFormatters.iso8601.date(
-                    from: request.transactionDate
-                ) ?? now
-            ),
-            comment: request.comment,
-            createdAt: DateFormatters.iso8601.string(
-                from: now
-            ),
-            updatedAt: DateFormatters.iso8601.string(from: now)
-        )
-        TransactionsService.mockTransactionResponses.append(transactionResponse)
-        
-        return Transaction(
-            id: id,
-            accountId: request.accountId,
-            categoryId: request.categoryId,
-            amount: Decimal(string: request.amount) ?? 0,
-            transactionDate: DateFormatters.iso8601.date(from: request.transactionDate) ?? now,
-            comment: request.comment,
-            createdAt: now,
-            updatedAt: now
-        )
     }
-
+    
     func updateTransaction(id: Int, request: TransactionRequest) async throws -> TransactionResponse {
-        guard let index = TransactionsService.mockTransactionResponses.firstIndex(where: { $0.id == id }) else {
-            throw NSError(
-                domain: "TransactionsService",
-                code: 404,
-                userInfo: [NSLocalizedDescriptionKey: "Transaction not found"]
+        do {
+            let updated = try await client.request(
+                endpoint: "transactions/\(id)",
+                method: "PUT",
+                body: request,
+                responseType: TransactionResponse.self
             )
+            try await persistence.update(updated)
+            try await backup.deleteBackup(id: id)
+            return updated
+        } catch {
+            let category = await categoriesPersistence.category(
+                by: request.categoryId
+            ) ?? Category(
+                id: request.categoryId,
+                name: "?",
+                emoji: "?",
+                direction: .outcome
+            )
+            let offlineUpdate = TransactionResponse(
+                id: id,
+                account: AccountBrief(
+                    id: request.accountId, name: "", balance: "", currency: ""),
+                category: category,
+                amount: request.amount,
+                transactionDate: request.transactionDate,
+                comment: request.comment,
+                createdAt: request.transactionDate,
+                updatedAt: request.transactionDate
+            )
+            try await persistence.update(offlineUpdate)
+            try await backup.addOrUpdateBackup(TransactionBackup(
+                id: id, action: .update, transaction: offlineUpdate
+            ))
+            let accountId = request.accountId
+            let oldTx = try? await persistence.fetchById(id)
+            let oldAmount = Decimal(string: oldTx?.amount ?? "0") ?? 0
+            let newAmount = Decimal(string: request.amount) ?? 0
+            let delta = newAmount - oldAmount
+            if let account = try? await accountsPersistence.account(by: accountId) {
+                let newBalance = account.balance + delta
+                let updatedAccount = account.withUpdatedBalance(newBalance)
+                try? await accountsBackup.addOrUpdateBackup(AccountBackup(
+                    id: accountId,
+                    action: .update,
+                    account: updatedAccount
+                ))
+            }
+            throw error
         }
-
-        let now = DateFormatters.iso8601.string(from: Date())
-        let old = TransactionsService.mockTransactionResponses[index]
-        let updated = TransactionResponse(
-            id: id,
-            account: old.account,
-            category: old.category,
-            amount: request.amount,
-            transactionDate: request.transactionDate,
-            comment: request.comment,
-            createdAt: old.createdAt,
-            updatedAt: now
-        )
-
-        TransactionsService.mockTransactionResponses[index] = updated
-        return updated
     }
-
+    
     func deleteTransaction(id: Int) async throws {
-        guard let index = TransactionsService.mockTransactionResponses.firstIndex(where: { $0.id == id }) else {
-            throw NSError(
-                domain: "TransactionsService",
-                code: 404,
-                userInfo: [NSLocalizedDescriptionKey: "Transaction not found"]
+        do {
+            let endpoint = "transactions/\(id)"
+            _ = try await client.request(
+                endpoint: endpoint,
+                method: "DELETE",
+                responseType: EmptyResponse.self
             )
+            try await persistence.delete(id: id)
+            try await backup.deleteBackup(id: id)
+        } catch {
+            let trx = try? await persistence.fetchById(id)
+            let delta = -(Decimal(string: trx?.amount ?? "0") ?? 0)
+            let accountId = trx?.account.id ?? 0
+            try await persistence.delete(id: id)
+            let dummy = TransactionResponse(
+                id: id,
+                account: AccountBrief(id: accountId, name: "", balance: "", currency: ""),
+                category: Category(
+                    id: trx?.category.id ?? 0,
+                    name: trx?.category.name ?? "?",
+                    emoji: trx?.category.emoji ?? "?",
+                    direction: trx?.category.direction ?? .outcome
+                ),
+                amount: trx?.amount ?? "0",
+                transactionDate: trx?.transactionDate ?? "",
+                comment: trx?.comment,
+                createdAt: trx?.createdAt ?? "",
+                updatedAt: trx?.updatedAt ?? ""
+            )
+            try await backup.addOrUpdateBackup(TransactionBackup(
+                id: id, action: .delete, transaction: dummy
+            ))
+            if accountId != 0, let account = try? await accountsPersistence.account(by: accountId) {
+                let newBalance = account.balance + delta
+                let updatedAccount = account.withUpdatedBalance(newBalance)
+                try? await accountsBackup.addOrUpdateBackup(AccountBackup(
+                    id: accountId,
+                    action: .update,
+                    account: updatedAccount
+                ))
+            }
+            throw error
         }
-
-        TransactionsService.mockTransactionResponses.remove(at: index)
+    }
+    
+    // MARK: - Helpers
+    private func syncBackupToBackendIfNeeded() async throws {
+        let backups = try await backup.allBackups()
+        for backupItem in backups {
+            switch backupItem.action {
+            case .create:
+                do {
+                    let req = mapToRequest(backupItem.transaction)
+                    _ = try await client.request(
+                        endpoint: "transactions",
+                        method: "POST",
+                        body: req,
+                        responseType: Transaction.self
+                    )
+                    try await backup.deleteBackup(id: backupItem.id)
+                } catch { continue }
+            case .update:
+                do {
+                    let req = mapToRequest(backupItem.transaction)
+                    _ = try await client.request(
+                        endpoint: "transactions/\(backupItem.id)",
+                        method: "PUT",
+                        body: req,
+                        responseType: TransactionResponse.self
+                    )
+                    try await backup.deleteBackup(id: backupItem.id)
+                } catch { continue }
+            case .delete:
+                do {
+                    _ = try await client.request(
+                        endpoint: "transactions/\(backupItem.id)",
+                        method: "DELETE",
+                        responseType: EmptyResponse.self
+                    )
+                    try await backup.deleteBackup(id: backupItem.id)
+                } catch { continue }
+            }
+        }
+    }
+    
+    private func mapToRequest(_ trx: TransactionResponse) -> TransactionRequest {
+        TransactionRequest(
+            accountId: trx.account.id,
+            categoryId: trx.category.id,
+            amount: trx.amount,
+            transactionDate: trx.transactionDate,
+            comment: trx.comment
+        )
+    }
+    
+    private func mergeTransactions(
+        primary: [TransactionResponse],
+        secondary: [TransactionResponse]
+    ) -> [TransactionResponse] {
+        let secondaryIds = Set(secondary.map { $0.id })
+        return secondary + primary.filter { !secondaryIds.contains($0.id) }
     }
 }
 
@@ -345,7 +325,7 @@ extension TransactionResponse {
     var date: Date {
         DateFormatters.iso8601.date(from: transactionDate) ?? .distantPast
     }
-
+    
     var decimalAmount: Decimal {
         Decimal(string: amount) ?? .zero
     }

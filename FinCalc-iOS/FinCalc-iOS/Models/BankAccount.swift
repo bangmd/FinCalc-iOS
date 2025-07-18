@@ -7,20 +7,20 @@
 
 import Foundation
 
-struct AccountBrief: Decodable {
+struct AccountBrief: Codable {
     let id: Int
     let name: String
     let balance: String
     let currency: String
 }
 
-struct AccountUpdateRequest: Encodable {
+struct AccountUpdateRequest: Codable {
     let name: String
     let balance: String
     let currency: String
 }
 
-struct Account: Decodable {
+struct Account: Codable {
     let id: Int
     let userId: Int
     let name: String
@@ -28,7 +28,7 @@ struct Account: Decodable {
     let currency: String
     let createdAt: Date
     let updatedAt: Date
-
+    
     private enum CodingKeys: String, CodingKey {
         case id
         case userId
@@ -38,7 +38,7 @@ struct Account: Decodable {
         case createdAt
         case updatedAt
     }
-
+    
     init(
         id: Int,
         userId: Int,
@@ -56,13 +56,13 @@ struct Account: Decodable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
-
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
         userId = try container.decode(Int.self, forKey: .userId)
         name = try container.decode(String.self, forKey: .name)
-
+        
         let balanceString = try container.decode(String.self, forKey: .balance)
         guard let balanceDecimal = Decimal(string: balanceString) else {
             throw DecodingError.dataCorruptedError(
@@ -72,9 +72,9 @@ struct Account: Decodable {
             )
         }
         balance = balanceDecimal
-
+        
         currency = try container.decode(String.self, forKey: .currency)
-
+        
         let createdAtString = try container.decode(String.self, forKey: .createdAt)
         let updatedAtString = try container.decode(String.self, forKey: .updatedAt)
         guard
@@ -89,5 +89,30 @@ struct Account: Decodable {
         }
         createdAt = created
         updatedAt = updated
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(userId, forKey: .userId)
+        try container.encode(name, forKey: .name)
+        try container.encode("\(balance)", forKey: .balance) 
+        try container.encode(currency, forKey: .currency)
+        try container.encode(DateFormatters.iso8601.string(from: createdAt), forKey: .createdAt)
+        try container.encode(DateFormatters.iso8601.string(from: updatedAt), forKey: .updatedAt)
+    }
+}
+
+extension Account {
+    func withUpdatedBalance(_ newBalance: Decimal) -> Account {
+        Account(
+            id: id,
+            userId: userId,
+            name: name,
+            balance: newBalance,
+            currency: currency,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
     }
 }

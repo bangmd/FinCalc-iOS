@@ -4,44 +4,101 @@
 //
 //  Created by Soslan Dzampaev on 10.06.2025.
 //
-
 import Foundation
+
 protocol CategoriesServiceProtocol {
     func getAllCategories() async throws -> [Category]
     func getCategoriesByType(direction: Direction) async throws -> [Category]
+    func updateCategory(_ category: Category) async throws
+    func createCategory(_ category: Category) async throws
+    func deleteCategory(id: Int) async throws
 }
 
 final class CategoriesService: CategoriesServiceProtocol {
-    // MARK: - Properties
-    public static let mockCategories: [Category] = [
-        Category(id: 1, name: "Аренда квартиры", emoji: "🏠", direction: .outcome),
-        Category(id: 2, name: "Одежда", emoji: "👔", direction: .outcome),
-        Category(id: 3, name: "Зарплата", emoji: "💸", direction: .income),
-        Category(id: 4, name: "Получение дивидендов", emoji: "📈", direction: .income),
-        Category(id: 5, name: "Продукты", emoji: "🍬", direction: .outcome),
-        Category(id: 6, name: "Транспорт", emoji: "🚗", direction: .outcome),
-        Category(id: 7, name: "Здоровье", emoji: "💊", direction: .outcome),
-        Category(id: 8, name: "Образование", emoji: "🎓", direction: .outcome),
-        Category(id: 9, name: "Подарки", emoji: "🎁", direction: .outcome),
-        Category(id: 10, name: "Инвестиции", emoji: "💹", direction: .outcome),
-        Category(id: 11, name: "Ремонт", emoji: "🔨", direction: .outcome),
-        Category(id: 12, name: "Спорт", emoji: "🤸‍♂️", direction: .outcome),
-        Category(id: 13, name: "Отпуск", emoji: "🏖️", direction: .outcome),
-        Category(id: 14, name: "Связь и интернет", emoji: "📱", direction: .outcome),
-        Category(id: 15, name: "Ресторан", emoji: "🍽️", direction: .outcome),
-        Category(id: 16, name: "Фриланс", emoji: "💻", direction: .income),
-        Category(id: 17, name: "Проценты по вкладам", emoji: "🏦", direction: .income),
-        Category(id: 18, name: "Продажа вещей", emoji: "🛍️", direction: .income),
-        Category(id: 19, name: "Кэшбэк", emoji: "🎉", direction: .income),
-        Category(id: 20, name: "Премия", emoji: "🏆", direction: .income)
-    ]
-
-    // MARK: - Methods
-    func getAllCategories() async throws -> [Category] {
-        return CategoriesService.mockCategories
+    private let client: NetworkClient
+    private let persistence: CategoriesPersistenceProtocol
+    private let backup: CategoriesBackupPersistenceProtocol
+    
+    init(
+        client: NetworkClient,
+        persistence: CategoriesPersistenceProtocol,
+        backup: CategoriesBackupPersistenceProtocol
+    ) {
+        self.client = client
+        self.persistence = persistence
+        self.backup = backup
     }
-
+    
+    // MARK: - Получение категорий
+    func getAllCategories() async throws -> [Category] {
+        do {
+            let categories = try await client.request(
+                endpoint: "categories",
+                method: "GET",
+                responseType: [Category].self
+            )
+            for cat in categories {
+                try await persistence.create(cat)
+            }
+            return categories
+        } catch {
+            return try await persistence.fetchAll()
+        }
+    }
+    
     func getCategoriesByType(direction: Direction) async throws -> [Category] {
-        return CategoriesService.mockCategories.filter { $0.direction == direction }
+        let all = try await getAllCategories()
+        return all.filter { $0.direction == direction }
+    }
+    
+    // MARK: - CRUD
+    func createCategory(_ category: Category) async throws {
+        let backup = CategoryBackup(id: category.id, action: .create, category: category)
+        try await self.backup.addOrUpdateBackup(backup)
+        
+        try await persistence.create(category)
+        
+        _ = try? await client.request(
+            endpoint: "categories",
+            method: "POST",
+            body: category,
+            responseType: Category.self
+        )
+    }
+    
+    func updateCategory(_ category: Category) async throws {
+        let backup = CategoryBackup(id: category.id, action: .update, category: category)
+        try await self.backup.addOrUpdateBackup(backup)
+        
+        try await persistence.update(category)
+        
+        _ = try? await client.request(
+            endpoint: "categories/\(category.id)",
+            method: "PUT",
+            body: category,
+            responseType: Category.self
+        )
+    }
+    
+    func deleteCategory(id: Int) async throws {
+        let backup = CategoryBackup(
+            id: id,
+            action: .delete,
+            category: Category(
+                id: id,
+                name: "",
+                emoji: "❓",
+                direction: .outcome
+            )
+        )
+        try await self.backup.addOrUpdateBackup(backup)
+        
+        try await persistence.delete(id: id)
+        
+        _ = try? await client.request(
+            endpoint: "categories/\(id)",
+            method: "DELETE",
+            responseType: EmptyResponse.self
+        )
     }
 }

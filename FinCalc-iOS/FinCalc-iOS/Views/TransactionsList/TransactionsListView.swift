@@ -9,14 +9,18 @@ import SwiftUI
 
 struct TransactionsListView: View {
     private let direction: Direction
+    private let dependencies: AppDependencies
     @StateObject private var viewModel: TransactionsListViewModel
     @State private var isPresentingEditor = false
     @State private var selectedTransaction: TransactionResponse? = nil
     @State private var isPresentingCreate = false
+    @State private var showAlert = false
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
     
-    init(direction: Direction) {
+    init(direction: Direction, dependencies: AppDependencies) {
+        self.dependencies = dependencies
         self.direction = direction
-        _viewModel = StateObject(wrappedValue: TransactionsListViewModel())
+        _viewModel = StateObject(wrappedValue: TransactionsListViewModel(service: dependencies.transactionsService))
     }
     
     var body: some View {
@@ -24,7 +28,6 @@ struct TransactionsListView: View {
             headerView
             totalAmountView
             operationsListView
-            plusButton
         }
         .task {
             await viewModel.loadTransactions(for: direction)
@@ -36,8 +39,8 @@ struct TransactionsListView: View {
             EditTransactionView(
                 mode: .create,
                 direction: direction,
-                transactionsService: TransactionsService(),
-                bankAccountsService: BankAccountsService()
+                transactionsService: dependencies.transactionsService,
+                bankAccountsService: dependencies.bankAccountsService
             ) {
                 isPresentingCreate = false
                 Task { await viewModel.loadTransactions(for: direction) }
@@ -47,11 +50,63 @@ struct TransactionsListView: View {
             EditTransactionView(
                 mode: .edit(transaction),
                 direction: direction,
-                transactionsService: TransactionsService(),
-                bankAccountsService: BankAccountsService()
+                transactionsService: dependencies.transactionsService,
+                bankAccountsService: dependencies.bankAccountsService
             ) {
+                print("onComplete в TransactionsListView")
+                
                 selectedTransaction = nil
                 Task { await viewModel.loadTransactions(for: direction) }
+            }
+        }
+        .onChange(of: viewModel.errorMessage) {
+            showAlert = viewModel.errorMessage != nil
+        }
+        .alert("Ошибка", isPresented: $showAlert) {
+            Button("Ок") {
+                viewModel.errorMessage = nil
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+        .overlay {
+            if viewModel.isLoading {
+                ZStack {
+                    Color.black.opacity(0.15).ignoresSafeArea()
+                    ProgressView("Загрузка...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemBackground)))
+                        .shadow(radius: 6)
+                }
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            plusButton
+                .padding()
+        }
+        .overlay(alignment: .top) {
+            if !networkMonitor.isConnected {
+                VStack {
+                    HStack {
+                        Image(systemName: "wifi.exclamationmark")
+                            .foregroundColor(.white)
+                        Text("Оффлайн режим")
+                            .foregroundColor(.white)
+                            .font(.callout)
+                            .bold()
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(Color.red.opacity(0.92))
+                    .cornerRadius(12)
+                    .shadow(radius: 8)
+                    Spacer()
+                }
+                .padding(.top, 44)
+                .padding(.horizontal, 16)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(999)
             }
         }
     }
@@ -91,7 +146,7 @@ struct TransactionsListView: View {
                 .fontWeight(.regular)
                 .padding(.leading, Constants.horizontalPadding)
             Spacer()
-            Text(viewModel.totalAmount.formatted(currencyCode: "RUB"))
+            Text(viewModel.totalAmount.formatted(currencyCode: CurrencyStore.shared.currentCurrency))
                 .fontWeight(.regular)
                 .padding(.trailing, Constants.horizontalPadding)
         }
@@ -162,7 +217,6 @@ struct TransactionsListView: View {
         }
     }
     
-    // MARK: - Plus Button
     private var plusButton: some View {
         HStack {
             Spacer()
@@ -184,5 +238,5 @@ struct TransactionsListView: View {
 }
 
 #Preview {
-    TransactionsListView(direction: .outcome)
+    TransactionsListView(direction: .outcome, dependencies: AppDependencies())
 }

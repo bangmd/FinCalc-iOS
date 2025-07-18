@@ -13,6 +13,18 @@ enum EditMode {
     case edit(TransactionResponse)
 }
 
+enum SaveResult {
+    case success
+    case offlineSaved
+    case validationFailed
+}
+
+enum DeleteResult {
+    case success
+    case offlineDeleted
+    case validationFailed
+}
+
 @MainActor
 final class EditTransactionViewModel: ObservableObject {
     @Published var selectedCategory: Category?
@@ -24,7 +36,7 @@ final class EditTransactionViewModel: ObservableObject {
         }
     }
     @Published var transactionDate = Date()
-    @Published var comment = ""
+    @Published var comment: String = ""
     @Published var categories = [Category]()
     @Published var isCategoriesLoading = false
     
@@ -66,53 +78,74 @@ final class EditTransactionViewModel: ObservableObject {
     }
     
     // MARK: - Actions
-    func saveOrCreate(completion: @escaping (Bool) -> Void) {
+    func saveOrCreate(completion: @escaping (SaveResult) -> Void) {
         Task {
+            let trimmedComment = comment.trimmingCharacters(in: .whitespacesAndNewlines)
+            let commentValue: String? = trimmedComment.isEmpty ? nil : trimmedComment
+            
             guard let selectedCategory = selectedCategory else {
-                completion(false)
+                await MainActor.run { completion(.validationFailed) }
                 return
             }
+            
+            let numericAmount = formattedAmount()
+            guard Double(numericAmount) != nil else {
+                await MainActor.run { completion(.validationFailed) }
+                return
+            }
+            
             do {
                 if isEditing {
-                    guard let editing = editingTransaction else { return }
+                    guard let editing = editingTransaction else {
+                        await MainActor.run { completion(.validationFailed) }
+                        return
+                    }
+                    
                     let request = TransactionRequest(
                         accountId: editing.account.id,
                         categoryId: selectedCategory.id,
-                        amount: formattedAmount(),
+                        amount: numericAmount,
                         transactionDate: DateFormatters.iso8601.string(from: transactionDate),
-                        comment: comment.isEmpty ? nil : comment
+                        comment: commentValue
                     )
+                    
                     _ = try await transactionsService.updateTransaction(id: editing.id, request: request)
-                    completion(true)
+                    await MainActor.run { completion(.success) }
+                    
                 } else {
                     guard let account = try await bankAccountsService.fetchAccount() else {
-                        completion(false)
+                        await MainActor.run { completion(.validationFailed) }
                         return
                     }
+                    
                     let request = TransactionRequest(
                         accountId: account.id,
                         categoryId: selectedCategory.id,
-                        amount: formattedAmount(),
+                        amount: numericAmount,
                         transactionDate: DateFormatters.iso8601.string(from: transactionDate),
-                        comment: comment.isEmpty ? nil : comment
+                        comment: commentValue
                     )
+                    
                     _ = try await transactionsService.createTransaction(request: request)
-                    completion(true)
+                    await MainActor.run { completion(.success) }
                 }
             } catch {
-                completion(false)
+                await MainActor.run { completion(.offlineSaved) }
             }
         }
     }
     
-    func deleteTransaction(completion: @escaping (Bool) -> Void) {
-        guard isEditing, let editing = editingTransaction else { return }
+    func deleteTransaction(completion: @escaping (DeleteResult) -> Void) {
+        guard isEditing, let editing = editingTransaction else {
+            completion(.validationFailed)
+            return
+        }
         Task {
             do {
                 try await transactionsService.deleteTransaction(id: editing.id)
-                completion(true)
+                await MainActor.run { completion(.success) }
             } catch {
-                completion(false)
+                await MainActor.run { completion(.offlineDeleted) }
             }
         }
     }
@@ -133,19 +166,19 @@ final class EditTransactionViewModel: ObservableObject {
         amount.replacingOccurrences(of: " ", with: "")
             .replacingOccurrences(of: ",", with: ".")
     }
-
+    
     private var decimalSeparator: String {
         Locale.current.decimalSeparator ?? "."
     }
-
+    
     private func filteredAmount(_ input: String) -> String {
-        let separator = Locale.current.decimalSeparator ?? "."
+        let separator = Locale.current.decimalSeparator ?? ","
         var result = ""
         var separatorUsed = false
         for char in input {
             if char.isWholeNumber {
                 result.append(char)
-            } else if String(char) == separator, !separatorUsed, !result.isEmpty {
+            } else if char == "." || char == ",", !separatorUsed, !result.isEmpty {
                 result.append(separator)
                 separatorUsed = true
             }

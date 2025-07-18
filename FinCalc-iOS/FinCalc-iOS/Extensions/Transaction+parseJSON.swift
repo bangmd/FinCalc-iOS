@@ -13,8 +13,8 @@ extension Transaction {
         TransactionRequest(
             accountId: accountId,
             categoryId: categoryId,
-            amount: "\(amount)",
-            transactionDate: DateFormatters.iso8601.string(from: transactionDate),
+            amount: amount,
+            transactionDate: transactionDate,
             comment: comment
         )
     }
@@ -24,10 +24,10 @@ extension Transaction {
             "id": id,
             "accountId": accountId,
             "categoryId": categoryId,
-            "amount": "\(amount)",
-            "transactionDate": DateFormatters.iso8601.string(from: transactionDate),
-            "createdAt": DateFormatters.iso8601.string(from: createdAt),
-            "updatedAt": DateFormatters.iso8601.string(from: updatedAt)
+            "amount": amount,
+            "transactionDate": transactionDate,
+            "createdAt": createdAt,
+            "updatedAt": updatedAt
         ]
         if let comment = comment {
             dict["comment"] = comment
@@ -41,14 +41,10 @@ extension Transaction {
             let id = dict["id"] as? Int,
             let accountId = dict["accountId"] as? Int,
             let categoryId = dict["categoryId"] as? Int,
-            let amountString = dict["amount"] as? String,
-            let amount = Decimal(string: amountString),
-            let transactionDateString = dict["transactionDate"] as? String,
-            let transactionDate = DateFormatters.iso8601.date(from: transactionDateString),
-            let createdAtString = dict["createdAt"] as? String,
-            let createdAt = DateFormatters.iso8601.date(from: createdAtString),
-            let updatedAtString = dict["updatedAt"] as? String,
-            let updatedAt = DateFormatters.iso8601.date(from: updatedAtString)
+            let amount = dict["amount"] as? String,
+            let transactionDate = dict["transactionDate"] as? String,
+            let createdAt = dict["createdAt"] as? String,
+            let updatedAt = dict["updatedAt"] as? String
         else {
             return nil
         }
