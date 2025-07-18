@@ -9,47 +9,38 @@ import Foundation
 
 protocol BankAccountsServiceProtocol {
     func fetchAccount() async throws -> Account?
+    func fetchAllAccounts() async throws -> [Account]
     func updateAccount(id: Int, request: AccountUpdateRequest) async throws -> Account?
 }
 
 final class BankAccountsService: BankAccountsServiceProtocol {
     // MARK: - Properties
-    private var mockAccounts: [Account] = [
-        Account(
-            id: 1,
-            userId: 123,
-            name: "Основной счёт",
-            balance: Decimal(string: "1000.00") ?? 0,
-            currency: "RUB",
-            createdAt: DateFormatters.iso8601.date(from: "2025-06-11T22:05:33.951Z") ?? Date(),
-            updatedAt: DateFormatters.iso8601.date(from: "2025-06-11T22:05:33.951Z") ?? Date()
-        )
-    ]
-
-    // MARK: - Methods
-    func fetchAccount() async throws -> Account? {
-        return mockAccounts.first
+    private let client: NetworkClient
+    
+    init(client: NetworkClient) {
+        self.client = client
     }
-
-    func updateAccount(id: Int, request: AccountUpdateRequest) async throws -> Account? {
-        guard let index = mockAccounts.firstIndex(where: { $0.id == id }) else {
-            throw NSError(
-                domain: "BankAccountsService",
-                code: 404,
-                userInfo: [NSLocalizedDescriptionKey: "Account not found"]
-            )
-        }
-        let now = Date()
-        let updated = Account(
-            id: mockAccounts[index].id,
-            userId: mockAccounts[index].userId,
-            name: request.name,
-            balance: Decimal(string: request.balance) ?? 0,
-            currency: request.currency,
-            createdAt: mockAccounts[index].createdAt,
-            updatedAt: now
+    
+    // MARK: - Methods
+    func fetchAllAccounts() async throws -> [Account] {
+        return try await client.request(
+            endpoint: "accounts",
+            method: "GET",
+            responseType: [Account].self
         )
-        mockAccounts[index] = updated
-        return updated
+    }
+    
+    func fetchAccount() async throws -> Account? {
+        let accounts = try await fetchAllAccounts()
+        return accounts.first
+    }
+    
+    func updateAccount(id: Int, request: AccountUpdateRequest) async throws -> Account? {
+        return try await client.request(
+            endpoint: "accounts/\(id)",
+            method: "PUT",
+            body: request,
+            responseType: Account.self
+        )
     }
 }

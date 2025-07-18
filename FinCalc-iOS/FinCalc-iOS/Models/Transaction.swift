@@ -25,6 +25,34 @@ struct TransactionRequest: Encodable {
     let amount: String
     let transactionDate: String
     let comment: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case accountId
+        case categoryId
+        case amount
+        case transactionDate
+        case comment
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(accountId, forKey: .accountId)
+        try container.encode(categoryId, forKey: .categoryId)
+        if let amountDecimal = Decimal(string: amount) {
+            try container.encode(amountDecimal, forKey: .amount)
+        } else {
+            throw EncodingError.invalidValue(amount, EncodingError.Context(
+                codingPath: [CodingKeys.amount],
+                debugDescription: "Invalid decimal string"
+            ))
+        }
+        try container.encode(transactionDate, forKey: .transactionDate)
+        if let comment = comment, !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            try container.encode(comment, forKey: .comment)
+        } else {
+            try container.encodeNil(forKey: .comment)
+        }
+    }
 }
 
 // MARK: - Domain Model
@@ -32,46 +60,9 @@ struct Transaction: Identifiable, Decodable {
     let id: Int
     let accountId: Int
     let categoryId: Int
-    let amount: Decimal
-    let transactionDate: Date
+    let amount: String
+    let transactionDate: String
     let comment: String?
-    let createdAt: Date
-    let updatedAt: Date
-
-    init(
-        id: Int,
-        accountId: Int,
-        categoryId: Int,
-        amount: Decimal,
-        transactionDate: Date,
-        comment: String?,
-        createdAt: Date,
-        updatedAt: Date
-    ) {
-        self.id = id
-        self.accountId = accountId
-        self.categoryId = categoryId
-        self.amount = amount
-        self.transactionDate = transactionDate
-        self.comment = comment
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-    }
-
-    init?(from response: TransactionResponse) {
-        guard
-            let amount = Decimal(string: response.amount),
-            let transactionDate = DateFormatters.iso8601.date(from: response.transactionDate),
-            let createdAt = DateFormatters.iso8601.date(from: response.createdAt),
-            let updatedAt = DateFormatters.iso8601.date(from: response.updatedAt)
-        else { return nil }
-        self.id = response.id
-        self.accountId = response.account.id
-        self.categoryId = response.category.id
-        self.amount = amount
-        self.transactionDate = transactionDate
-        self.comment = response.comment
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-    }
+    let createdAt: String
+    let updatedAt: String
 }

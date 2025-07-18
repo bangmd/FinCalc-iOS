@@ -15,10 +15,10 @@ extension Transaction {
             "\(accountId)",
             "\(categoryId)",
             "\(amount)",
-            DateFormatters.iso8601.string(from: transactionDate),
+            transactionDate,
             comment ?? "",
-            DateFormatters.iso8601.string(from: createdAt),
-            DateFormatters.iso8601.string(from: updatedAt)
+            createdAt,
+            updatedAt
         ].joined(separator: ",")
     }
 
@@ -33,20 +33,16 @@ extension Transaction {
         let idString = components[CSVField.id.rawValue].trimmingCharacters(in: .whitespaces)
         let accountIdString = components[CSVField.accountId.rawValue]
         let categoryIdString = components[CSVField.categoryId.rawValue]
-        let amountString = components[CSVField.amount.rawValue]
-        let dateString = components[CSVField.transactionDate.rawValue]
+        let amount = components[CSVField.amount.rawValue]
+        let transactionDate = components[CSVField.transactionDate.rawValue]
         let commentString = components[CSVField.comment.rawValue]
-        let createdAtString = components[CSVField.createdAt.rawValue]
-        let updatedAtString = components[CSVField.updatedAt.rawValue]
+        let createdAt = components[CSVField.createdAt.rawValue]
+        let updatedAt = components[CSVField.updatedAt.rawValue]
 
         guard
             let id = Int(idString),
             let accountId = Int(accountIdString),
-            let categoryId = Int(categoryIdString),
-            let amount = Decimal(string: amountString),
-            let transactionDate = DateFormatters.iso8601.date(from: dateString),
-            let createdAt = DateFormatters.iso8601.date(from: createdAtString),
-            let updatedAt = DateFormatters.iso8601.date(from: updatedAtString)
+            let categoryId = Int(categoryIdString)
         else {
             return nil
         }
