@@ -23,7 +23,7 @@ final class AnalysisViewModel {
             if fromDate > toDate {
                 toDate = fromDate
             }
-            loadTransactions()
+            Task { await loadTransactions() }
         }
     }
     var toDate: Date {
@@ -31,20 +31,22 @@ final class AnalysisViewModel {
             if toDate < fromDate {
                 fromDate = toDate
             }
-            loadTransactions()
+            Task { await loadTransactions() }
         }
     }
     
     // MARK: - Сортировка
     var sortOption: SortOption = .dateDesc {
         didSet {
-            loadTransactions()
+            Task { await loadTransactions() }
         }
     }
     
     // MARK: - Конфигурация
     let direction: Direction
-    private let accountId: Int
+    private var accountId: Int {
+        CurrencyStore.shared.currentAccountId
+    }
     private let service: TransactionsServiceProtocol
     
     // MARK: - Инициализация
@@ -52,59 +54,56 @@ final class AnalysisViewModel {
         direction: Direction,
         fromDate: Date,
         toDate: Date,
-        accountId: Int = 1,
-        service: TransactionsServiceProtocol = TransactionsService()
+        service: TransactionsServiceProtocol
     ) {
         self.direction = direction
-        self.accountId = accountId
         self.service = service
         self.fromDate = Calendar.current.startOfDay(for: fromDate)
         self.toDate = Calendar.current.date(
             bySettingHour: 23, minute: 59, second: 59, of: toDate
         ) ?? Calendar.current.startOfDay(for: toDate)
-        loadTransactions()
     }
     
     // MARK: - Загрузка операций
-    func loadTransactions() {
-        isLoading = true
+    @MainActor
+    func loadTransactions() async {
+        self.isLoading = true
         
         guard let (startOfDay, endOfDay) = makeBoundaryDates() else {
             errorMessage = "Ошибка периода"
             transactions = []
             totalAmount = 0
-            isLoading = false
-            onDataChanged?()
+            self.isLoading = false
+            await MainActor.run {
+                self.onDataChanged?()
+            }
             return
         }
         
         let startString = DateFormatters.iso8601.string(from: startOfDay)
         let endString = DateFormatters.iso8601.string(from: endOfDay)
         
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                let all = try await service.fetchTransactions(
-                    accountId: accountId,
-                    startDate: startString,
-                    endDate: endString
-                )
-                var filtered = filterByDirection(all)
-                sort(&filtered)
-                transactions = filtered
-                totalAmount = computeTotal(filtered)
-                shareById = calculateShares(for: filtered)
-                errorMessage = nil
-            } catch {
-                transactions = []
-                totalAmount = 0
-                errorMessage = error.localizedDescription
-            }
-            isLoading = false
+        do {
+            let all = try await service.fetchTransactions(
+                accountId: accountId,
+                startDate: startString,
+                endDate: endString
+            )
+            var filtered = filterByDirection(all)
+            sort(&filtered)
+            transactions = filtered
             await MainActor.run {
                 self.onDataChanged?()
             }
+            totalAmount = computeTotal(filtered)
+            shareById = calculateShares(for: filtered)
+            errorMessage = nil
+        } catch {
+            transactions = []
+            totalAmount = 0
+            errorMessage = error.localizedDescription
         }
+        self.isLoading = false
     }
     
     private func makeBoundaryDates() -> (Date, Date)? {

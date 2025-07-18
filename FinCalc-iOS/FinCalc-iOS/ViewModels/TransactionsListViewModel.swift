@@ -15,14 +15,9 @@ final class TransactionsListViewModel: ObservableObject {
     @MainActor @Published var totalAmount: Decimal = 0
 
     private let service: TransactionsServiceProtocol
-    private let accountId: Int
 
-    init(
-        service: TransactionsServiceProtocol = TransactionsService(),
-        accountId: Int = 1
-    ) {
+    init(service: TransactionsServiceProtocol) {
         self.service = service
-        self.accountId = accountId
     }
 
     @MainActor
@@ -47,13 +42,15 @@ final class TransactionsListViewModel: ObservableObject {
 
         do {
             let responses = try await service.fetchTransactions(
-                accountId: accountId,
+                accountId: CurrencyStore.shared.currentAccountId,
                 startDate: startDateString,
                 endDate: endDateString
             )
 
+            let calendar = Calendar.current
             let filteredResponses = responses.filter {
-                $0.category.direction == direction
+                $0.category.direction == direction &&
+                calendar.isDateInToday($0.date)
             }
 
             self.transactions = filteredResponses

@@ -24,7 +24,7 @@ final class EditTransactionViewModel: ObservableObject {
         }
     }
     @Published var transactionDate = Date()
-    @Published var comment = ""
+    @Published var comment: String = ""
     @Published var categories = [Category]()
     @Published var isCategoriesLoading = false
     
@@ -68,39 +68,57 @@ final class EditTransactionViewModel: ObservableObject {
     // MARK: - Actions
     func saveOrCreate(completion: @escaping (Bool) -> Void) {
         Task {
+            let trimmedComment = comment.trimmingCharacters(in: .whitespacesAndNewlines)
+            let commentValue: String? = trimmedComment.isEmpty ? nil : trimmedComment
+
             guard let selectedCategory = selectedCategory else {
-                completion(false)
+                await MainActor.run { completion(false) }
                 return
             }
+
+            let numericAmount = formattedAmount()
+            guard Double(numericAmount) != nil else {
+                await MainActor.run { completion(false) }
+                return
+            }
+
             do {
                 if isEditing {
-                    guard let editing = editingTransaction else { return }
+                    guard let editing = editingTransaction else {
+                        await MainActor.run { completion(false) }
+                        return
+                    }
+
                     let request = TransactionRequest(
                         accountId: editing.account.id,
                         categoryId: selectedCategory.id,
-                        amount: formattedAmount(),
+                        amount: numericAmount,
                         transactionDate: DateFormatters.iso8601.string(from: transactionDate),
-                        comment: comment.isEmpty ? nil : comment
+                        comment: commentValue
                     )
+
                     _ = try await transactionsService.updateTransaction(id: editing.id, request: request)
-                    completion(true)
+                    await MainActor.run { completion(true) }
+
                 } else {
                     guard let account = try await bankAccountsService.fetchAccount() else {
-                        completion(false)
+                        await MainActor.run { completion(false) }
                         return
                     }
+
                     let request = TransactionRequest(
                         accountId: account.id,
                         categoryId: selectedCategory.id,
-                        amount: formattedAmount(),
+                        amount: numericAmount,
                         transactionDate: DateFormatters.iso8601.string(from: transactionDate),
-                        comment: comment.isEmpty ? nil : comment
+                        comment: commentValue
                     )
+
                     _ = try await transactionsService.createTransaction(request: request)
-                    completion(true)
+                    await MainActor.run { completion(true) }
                 }
             } catch {
-                completion(false)
+                await MainActor.run { completion(false) }
             }
         }
     }
@@ -110,9 +128,10 @@ final class EditTransactionViewModel: ObservableObject {
         Task {
             do {
                 try await transactionsService.deleteTransaction(id: editing.id)
-                completion(true)
+                await MainActor.run { completion(true) }
             } catch {
-                completion(false)
+                print("Ошибка удаления транзакции: \(error)")
+                await MainActor.run { completion(false) }
             }
         }
     }
@@ -139,13 +158,13 @@ final class EditTransactionViewModel: ObservableObject {
     }
 
     private func filteredAmount(_ input: String) -> String {
-        let separator = Locale.current.decimalSeparator ?? "."
+        let separator = Locale.current.decimalSeparator ?? ","
         var result = ""
         var separatorUsed = false
         for char in input {
             if char.isWholeNumber {
                 result.append(char)
-            } else if String(char) == separator, !separatorUsed, !result.isEmpty {
+            } else if char == "." || char == ",", !separatorUsed, !result.isEmpty {
                 result.append(separator)
                 separatorUsed = true
             }

@@ -46,8 +46,8 @@ final class TransactionsHistoryViewModel: ObservableObject {
     @MainActor
     init(
         direction: Direction,
-        accountId: Int = 1,
-        service: TransactionsServiceProtocol = TransactionsService()
+        accountId: Int = CurrencyStore.shared.currentAccountId,
+        service: TransactionsServiceProtocol
     ) {
         self.direction = direction
         self.accountId = accountId

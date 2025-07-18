@@ -22,7 +22,7 @@ final class ExpensesViewModel: ObservableObject {
     private let service: CategoriesServiceProtocol
 
     // MARK: - Init
-    init(service: CategoriesServiceProtocol = CategoriesService()) {
+    init(service: CategoriesServiceProtocol) {
         self.service = service
         Task { await loadArticles() }
     }

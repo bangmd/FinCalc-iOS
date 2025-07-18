@@ -9,7 +9,12 @@ import SwiftUI
 
 @main
 struct FinCalc: App {
+    let networkClient = NetworkClient(session: .shared, token: "wWVUPYHncK4dcidYz6eUxOsg")
+    let transactionsService: TransactionsService
+    
     init() {
+        self.transactionsService = TransactionsService(client: networkClient)
+
         configureTabBarAppearance()
 
         Task { @MainActor in
@@ -32,6 +37,9 @@ struct FinCalc: App {
         WindowGroup {
             NavigationStack {
                 TabBarView()
+                    .task {
+                        await AccountViewModel.preloadAccountInfo(service: BankAccountsService(client: networkClient))
+                    }
             }
         }
     }
