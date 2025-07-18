@@ -137,13 +137,14 @@ struct EditTransactionView: View {
                 HStack {
                     Button {
                         isLoading = true
-                        viewModel.deleteTransaction { success in
+                        viewModel.deleteTransaction { result in
                             DispatchQueue.main.async {
                                 isLoading = false
-                                if success {
+                                switch result {
+                                case .success, .offlineDeleted:
                                     dismiss()
                                     onComplete()
-                                } else {
+                                case .validationFailed:
                                     showToast = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
                                         withAnimation { showToast = false }
@@ -176,28 +177,23 @@ struct EditTransactionView: View {
                 Spacer()
                 Button(viewModel.isEditing ? "Сохранить" : "Создать") {
                     if !viewModel.canSave {
-                        withAnimation {
-                            showToast = true
-                        }
+                        withAnimation { showToast = true }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
-                            withAnimation {
-                                showToast = false
-                            }
+                            withAnimation { showToast = false }
                         }
                     } else {
                         isLoading = true
-                        viewModel.saveOrCreate { success in
+                        viewModel.saveOrCreate { result in
                             DispatchQueue.main.async {
                                 isLoading = false
-                                if success {
+                                switch result {
+                                case .success, .offlineSaved:
                                     dismiss()
                                     onComplete()
-                                } else {
+                                case .validationFailed:
                                     showToast = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
-                                        withAnimation {
-                                            showToast = false
-                                        }
+                                        withAnimation { showToast = false }
                                     }
                                 }
                             }
