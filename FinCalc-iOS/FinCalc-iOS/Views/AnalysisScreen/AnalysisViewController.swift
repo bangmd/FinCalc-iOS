@@ -5,6 +5,7 @@
 //  Created by Soslan Dzampaev on 10.07.2025.
 //
 import UIKit
+import PieChart
 
 final class AnalysisViewController: UIViewController {
     let dependencies = AppDependencies()
@@ -34,10 +35,10 @@ final class AnalysisViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var fakeAnalysis: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "fakeAnalysis"))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private var pieChartView: PieChartView = {
+        let chartView = PieChartView(frame: CGRect(x: 0, y: 0, width: 150, height: 145))
+        chartView.translatesAutoresizingMaskIntoConstraints = false
+        return chartView
     }()
     
     private lazy var operationsTableView: UITableView = {
@@ -105,7 +106,7 @@ final class AnalysisViewController: UIViewController {
     private func addSubviews() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        [titleLabel, periodTableView, fakeAnalysis, operationsTableView].forEach { contentView.addSubview($0) }
+        [titleLabel, periodTableView, pieChartView, operationsTableView].forEach { contentView.addSubview($0) }
     }
     
     private func addConstraints() {
@@ -132,12 +133,12 @@ final class AnalysisViewController: UIViewController {
             periodTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             tableHeightConstraint,
             
-            fakeAnalysis.topAnchor.constraint(equalTo: periodTableView.bottomAnchor),
-            fakeAnalysis.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            fakeAnalysis.widthAnchor.constraint(equalToConstant: 150),
-            fakeAnalysis.heightAnchor.constraint(equalToConstant: 145),
+            pieChartView.topAnchor.constraint(equalTo: periodTableView.bottomAnchor),
+            pieChartView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            pieChartView.widthAnchor.constraint(equalToConstant: 150),
+            pieChartView.heightAnchor.constraint(equalToConstant: 145),
             
-            operationsTableView.topAnchor.constraint(equalTo: fakeAnalysis.bottomAnchor, constant: 16),
+            operationsTableView.topAnchor.constraint(equalTo: pieChartView.bottomAnchor, constant: 16),
             operationsTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             operationsTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             operationsTableHeightConstraint,
@@ -152,6 +153,7 @@ final class AnalysisViewController: UIViewController {
                 self.periodTableView.reloadData()
                 self.operationsTableView.reloadData()
                 self.updateTableHeights()
+                self.pieChartView.setEntities(self.viewModel.makePieEntities(), animated: true)
             }
         }
     }

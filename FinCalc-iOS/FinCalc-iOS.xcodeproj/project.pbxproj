@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB3295852E2C61130006C982 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = DB3295842E2C61130006C982 /* PieChart */; };
+		DB3295872E2C61130006C982 /* Utilities in Frameworks */ = {isa = PBXBuildFile; productRef = DB3295862E2C61130006C982 /* Utilities */; };
 		DB7CD8892E2B02E900216619 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DB7CD8882E2B02E900216619 /* Settings.bundle */; };
+		DB9ED45C2E2C62330073327A /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = DB9ED45B2E2C62330073327A /* PieChart */; };
+		DBDB45F22E2C4E4E00752B04 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = DBDB45F12E2C4E4E00752B04 /* PieChart */; };
+		DBDB45F42E2C4E4E00752B04 /* Utilities in Frameworks */ = {isa = PBXBuildFile; productRef = DBDB45F32E2C4E4E00752B04 /* Utilities */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +49,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBDB45F22E2C4E4E00752B04 /* PieChart in Frameworks */,
+				DB3295872E2C61130006C982 /* Utilities in Frameworks */,
+				DB9ED45C2E2C62330073327A /* PieChart in Frameworks */,
+				DB3295852E2C61130006C982 /* PieChart in Frameworks */,
+				DBDB45F42E2C4E4E00752B04 /* Utilities in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +107,11 @@
 			);
 			name = "FinCalc-iOS";
 			packageProductDependencies = (
+				DBDB45F12E2C4E4E00752B04 /* PieChart */,
+				DBDB45F32E2C4E4E00752B04 /* Utilities */,
+				DB3295842E2C61130006C982 /* PieChart */,
+				DB3295862E2C61130006C982 /* Utilities */,
+				DB9ED45B2E2C62330073327A /* PieChart */,
 			);
 			productName = "FinCalc-iOS";
 			productReference = DB2DDF792DF5DDDE0042D9E1 /* FinCalc-iOS.app */;
@@ -156,6 +171,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DB1E2DB12DF61E97007AAC69 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				DB9ED45A2E2C62330073327A /* XCLocalSwiftPackageReference "../Utilities" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB2DDF7A2DF5DDDE0042D9E1 /* Products */;
@@ -477,6 +493,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		DB9ED45A2E2C62330073327A /* XCLocalSwiftPackageReference "../Utilities" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Utilities;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		DB1E2DB12DF61E97007AAC69 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -493,6 +516,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB1E2DB12DF61E97007AAC69 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		DB3295842E2C61130006C982 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		DB3295862E2C61130006C982 /* Utilities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Utilities;
+		};
+		DB9ED45B2E2C62330073327A /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		DBDB45F12E2C4E4E00752B04 /* PieChart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PieChart;
+		};
+		DBDB45F32E2C4E4E00752B04 /* Utilities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Utilities;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

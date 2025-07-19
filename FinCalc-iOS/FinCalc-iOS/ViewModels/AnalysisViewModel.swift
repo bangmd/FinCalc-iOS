@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PieChart
 
 final class AnalysisViewModel {
     // MARK: - State
@@ -147,6 +148,17 @@ final class AnalysisViewModel {
     }
     
     // MARK: - API для ViewController
+    func makePieEntities() -> [Entity] {
+        let grouped = Dictionary(grouping: transactions) { $0.category.name }
+        let entities = grouped.map { (label, trs) in
+            Entity(
+                value: trs.reduce(Decimal(0)) { $0 + (Decimal(string: $1.amount) ?? 0) },
+                label: label
+            )
+        }
+        return entities.sorted { $0.value > $1.value }
+    }
+    
     func updateFromDate(_ date: Date) {
         fromDate = date
     }
