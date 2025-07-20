@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import FinCalcCore
 
 @main
 struct FinCalc: App {
     let networkClient = NetworkClient(session: .shared, token: "wWVUPYHncK4dcidYz6eUxOsg")
     let transactionsService: TransactionsService
     let bankAccountsService: BankAccountsService
+    
+    @State private var showLottie = true
     
     init() {
         self.transactionsService = TransactionsService(
@@ -48,11 +51,20 @@ struct FinCalc: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                TabBarView()
-                    .environmentObject(NetworkMonitor.shared) 
-                    .task {
-                        await AccountViewModel.preloadAccountInfo(service: bankAccountsService)
-                    }
+                if showLottie {
+                    LottieView(animationName: "Lottie-JSON", onFinished: {
+                        withAnimation {
+                            showLottie = false
+                        }
+                    })
+                    .ignoresSafeArea()
+                } else {
+                    TabBarView()
+                        .environmentObject(NetworkMonitor.shared)
+                        .task {
+                            await AccountViewModel.preloadAccountInfo(service: bankAccountsService)
+                        }
+                }
             }
         }
     }

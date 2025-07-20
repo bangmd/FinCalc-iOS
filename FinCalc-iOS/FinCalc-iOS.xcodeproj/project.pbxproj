@@ -11,6 +11,7 @@
 		DB3295872E2C61130006C982 /* Utilities in Frameworks */ = {isa = PBXBuildFile; productRef = DB3295862E2C61130006C982 /* Utilities */; };
 		DB7CD8892E2B02E900216619 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DB7CD8882E2B02E900216619 /* Settings.bundle */; };
 		DB9ED45C2E2C62330073327A /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = DB9ED45B2E2C62330073327A /* PieChart */; };
+		DBB935C02E2DA733001BEF41 /* FinCalcCore in Frameworks */ = {isa = PBXBuildFile; productRef = DBB935BF2E2DA733001BEF41 /* FinCalcCore */; };
 		DBDB45F22E2C4E4E00752B04 /* PieChart in Frameworks */ = {isa = PBXBuildFile; productRef = DBDB45F12E2C4E4E00752B04 /* PieChart */; };
 		DBDB45F42E2C4E4E00752B04 /* Utilities in Frameworks */ = {isa = PBXBuildFile; productRef = DBDB45F32E2C4E4E00752B04 /* Utilities */; };
 /* End PBXBuildFile section */
@@ -53,6 +54,7 @@
 				DB3295872E2C61130006C982 /* Utilities in Frameworks */,
 				DB9ED45C2E2C62330073327A /* PieChart in Frameworks */,
 				DB3295852E2C61130006C982 /* PieChart in Frameworks */,
+				DBB935C02E2DA733001BEF41 /* FinCalcCore in Frameworks */,
 				DBDB45F42E2C4E4E00752B04 /* Utilities in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,6 +114,7 @@
 				DB3295842E2C61130006C982 /* PieChart */,
 				DB3295862E2C61130006C982 /* Utilities */,
 				DB9ED45B2E2C62330073327A /* PieChart */,
+				DBB935BF2E2DA733001BEF41 /* FinCalcCore */,
 			);
 			productName = "FinCalc-iOS";
 			productReference = DB2DDF792DF5DDDE0042D9E1 /* FinCalc-iOS.app */;
@@ -172,6 +175,7 @@
 			packageReferences = (
 				DB1E2DB12DF61E97007AAC69 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				DB9ED45A2E2C62330073327A /* XCLocalSwiftPackageReference "../Utilities" */,
+				DBB935BE2E2DA733001BEF41 /* XCLocalSwiftPackageReference "../FinCalcCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB2DDF7A2DF5DDDE0042D9E1 /* Products */;
@@ -498,6 +502,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Utilities;
 		};
+		DBB935BE2E2DA733001BEF41 /* XCLocalSwiftPackageReference "../FinCalcCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../FinCalcCore;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -528,6 +536,10 @@
 		DB9ED45B2E2C62330073327A /* PieChart */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PieChart;
+		};
+		DBB935BF2E2DA733001BEF41 /* FinCalcCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FinCalcCore;
 		};
 		DBDB45F12E2C4E4E00752B04 /* PieChart */ = {
 			isa = XCSwiftPackageProductDependency;
