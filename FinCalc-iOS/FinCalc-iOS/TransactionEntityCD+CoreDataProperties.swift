@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-
 extension TransactionEntityCD {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TransactionEntityCD> {
@@ -33,6 +32,4 @@ extension TransactionEntityCD {
 
 }
 
-extension TransactionEntityCD : Identifiable {
-
-}
+extension TransactionEntityCD: Identifiable { }

@@ -38,7 +38,10 @@ enum TabBarItem: String, Identifiable, CaseIterable {
 struct TabBarView: View {
     let dependencies = AppDependencies()
     @State private var isBalanceHidden = false
-    @StateObject private var accountVM = AccountViewModel(service: AppDependencies().bankAccountsService)
+    @StateObject private var accountVM = AccountViewModel(
+        service: AppDependencies().bankAccountsService,
+        transactionsService: AppDependencies().transactionsService
+    )
     
     var body: some View {
         TabView {
