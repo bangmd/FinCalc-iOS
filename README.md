@@ -59,12 +59,17 @@
 
 ## UI и UX детали
 
-|                               | Скриншот / Видео                                                                               |
-| ----------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Моя история**               | ![История](https://github.com/user-attachments/assets/8e885433-8d8c-4b7c-8fa2-58f3b7c25944)    |
-| **Анализ (UIKit)**            | ![Анализ](https://github.com/user-attachments/assets/9b66ef9d-0063-489b-9146-99727824a313)     |
-| **Создание / Редактирование** | ![CreateEdit](https://github.com/user-attachments/assets/1236cf94-eaf4-485e-a69f-6eb445d11dde) |
-| **Мой счёт (баланс скрыт)**   | ![Скрыто](https://github.com/user-attachments/assets/ce0f6ae6-088e-4322-a95a-15ac4ba26ca1)     |
+Скриншоты основных экранов:
+
+| Моя история                                                                                 | Анализ (UIKit)                                                                             | Создание / Редактирование                                                                      | Мой счёт (скрытый баланс)                                                                  |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| ![История](https://github.com/user-attachments/assets/8e885433-8d8c-4b7c-8fa2-58f3b7c25944) | ![Анализ](https://github.com/user-attachments/assets/9b66ef9d-0063-489b-9146-99727824a313) | ![CreateEdit](https://github.com/user-attachments/assets/1236cf94-eaf4-485e-a69f-6eb445d11dde) | ![Скрыто](https://github.com/user-attachments/assets/ce0f6ae6-088e-4322-a95a-15ac4ba26ca1) |
+
+\---|---|
+\| **Моя история** | ![История](https://github.com/user-attachments/assets/8e885433-8d8c-4b7c-8fa2-58f3b7c25944) |
+\| **Анализ (UIKit)** | ![Анализ](https://github.com/user-attachments/assets/9b66ef9d-0063-489b-9146-99727824a313) |
+\| **Создание / Редактирование** | ![CreateEdit](https://github.com/user-attachments/assets/1236cf94-eaf4-485e-a69f-6eb445d11dde) |
+\| **Мой счёт (баланс скрыт)** | ![Скрыто](https://github.com/user-attachments/assets/ce0f6ae6-088e-4322-a95a-15ac4ba26ca1) |
 
 ---
 
