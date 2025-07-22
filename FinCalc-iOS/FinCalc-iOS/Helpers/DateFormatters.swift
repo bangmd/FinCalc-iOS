@@ -25,7 +25,7 @@ enum DateFormatters {
     static let hhmmUTC: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.locale = Locale(identifier: "ru_RU_POSIX")
         formatter.timeZone = TimeZone.current
         return formatter
     }()
@@ -40,6 +40,11 @@ enum DateFormatters {
         formatter.formatOptions = [.withInternetDateTime]
         return formatter
     }()
+    
+    static func parseISO8601(_ string: String) -> Date? {
+        iso8601WithFractional.date(from: string)
+        ?? iso8601WithoutFractional.date(from: string)
+    }
 }
 
 extension Date {

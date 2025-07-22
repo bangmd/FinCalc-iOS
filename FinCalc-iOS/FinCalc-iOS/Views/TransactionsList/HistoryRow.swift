@@ -42,7 +42,7 @@ struct HistoryRow: View {
                 Text(amount.formatted(currencyCode: transaction.account.currency))
                     .font(.system(size: Constants.primaryFontSize))
                     .foregroundColor(.primary)
-                if let date = DateFormatters.iso8601.date(from: transaction.updatedAt) {
+                if let date = DateFormatters.parseISO8601(transaction.transactionDate) {
                     Text(DateFormatters.hhmmUTC.string(from: date))
                         .font(.system(size: Constants.secondaryFontSize))
                         .foregroundColor(.primary)
