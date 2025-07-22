@@ -62,7 +62,7 @@ final class EditTransactionViewModel: ObservableObject {
         if case let .edit(transaction) = mode {
             self.selectedCategory = transaction.category
             self.amount = transaction.amount
-            self.transactionDate = DateFormatters.iso8601.date(from: transaction.transactionDate) ?? Date()
+            self.transactionDate = DateFormatters.parseISO8601(transaction.transactionDate) ?? Date()
             self.comment = transaction.comment ?? ""
             self.editingTransaction = transaction
         }
