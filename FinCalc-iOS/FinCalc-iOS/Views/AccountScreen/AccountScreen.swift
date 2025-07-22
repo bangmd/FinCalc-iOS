@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct AccountScreen: View {
     @Binding var isBalanceHidden: Bool
@@ -32,8 +33,14 @@ struct AccountScreen: View {
             ScrollView {
                 balanceSection
                 currencySection
+                if !viewModel.isEditing, !viewModel.dailyBalances.isEmpty {
+                    BalanceChartView(balances: viewModel.dailyBalances,
+                                     monthlyBalances: viewModel.monthlyBalances)
+                        .frame(height: 220)
+                        .transition(.opacity)
+                        .padding(.vertical, 16)
+                }
             }
-            .refreshable { await refresh() }
             Spacer()
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -178,6 +185,6 @@ extension AccountScreen {
     }
 
     private func refresh() async {
-        await viewModel.loadAccount()
+        await viewModel.refreshAll()
     }
 }

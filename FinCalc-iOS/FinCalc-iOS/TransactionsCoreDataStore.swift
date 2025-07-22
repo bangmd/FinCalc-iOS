@@ -85,20 +85,20 @@ extension TransactionEntityCD {
         )
     }
 
-    func populate(from tx: TransactionResponse) {
-        self.id = Int64(tx.id)
-        self.accountId = Int64(tx.account.id)
-        self.accountName = tx.account.name
-        self.accountBalance = tx.account.balance
-        self.accountCurrency = tx.account.currency
-        self.categoryId = Int64(tx.category.id)
-        self.categoryName = tx.category.name
-        self.categoryEmoji = String(tx.category.emoji)
-        self.direction = tx.category.direction.rawValue
-        self.amount = tx.amount
-        self.transactionDate = tx.transactionDate
-        self.comment = tx.comment
-        self.createdAt = tx.createdAt
-        self.updatedAt = tx.updatedAt
+    func populate(from transaction: TransactionResponse) {
+        self.id = Int64(transaction.id)
+        self.accountId = Int64(transaction.account.id)
+        self.accountName = transaction.account.name
+        self.accountBalance = transaction.account.balance
+        self.accountCurrency = transaction.account.currency
+        self.categoryId = Int64(transaction.category.id)
+        self.categoryName = transaction.category.name
+        self.categoryEmoji = String(transaction.category.emoji)
+        self.direction = transaction.category.direction.rawValue
+        self.amount = transaction.amount
+        self.transactionDate = transaction.transactionDate
+        self.comment = transaction.comment
+        self.createdAt = transaction.createdAt
+        self.updatedAt = transaction.updatedAt
     }
 }

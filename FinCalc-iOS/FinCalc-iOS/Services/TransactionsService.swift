@@ -323,9 +323,14 @@ final class TransactionsService: TransactionsServiceProtocol {
 // MARK: - Helpers for sorting
 extension TransactionResponse {
     var date: Date {
-        DateFormatters.iso8601.date(from: transactionDate) ?? .distantPast
+        if let date = DateFormatters.iso8601WithFractional.date(from: transactionDate) {
+            return date
+        }
+        if let date = DateFormatters.iso8601WithoutFractional.date(from: transactionDate) {
+            return date
+        }
+        return .distantPast
     }
-    
     var decimalAmount: Decimal {
         Decimal(string: amount) ?? .zero
     }
