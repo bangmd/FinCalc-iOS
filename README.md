@@ -8,11 +8,11 @@
 
 ## 🛠 Стек технологий
 
-* **Swift **
+* **Swift**
 * **SwiftUI + UIKit**
 * **URLSession**
 * **SwiftData**
-* **Swift Concurrency** (async/await)**
+* **Swift Concurrency (async/await)**
 * **MVVM Architecture** 
 
 ---
